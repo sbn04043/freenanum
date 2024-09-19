@@ -1,6 +1,8 @@
-package shop.freenanum.model.entity;
+package shop.freenanum.trade.model.entity;
+
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Entity
@@ -10,12 +12,15 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "like")
+@Table(name = "save")
 public class LikeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
-    private long userId;
-    private long productId;
+    @NotNull
+    private Long userId;
+
+    @NotNull
+    private Long productId;
 }

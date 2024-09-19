@@ -1,9 +1,10 @@
-package shop.freenanum.model.entity;
+package shop.freenanum.trade.model.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
+import shop.freenanum.trade.model.enumeration.ProductStatus;
 
 @Entity
 @Getter
@@ -14,28 +15,25 @@ import org.hibernate.validator.constraints.Length;
 @Builder
 @Table(name = "product")
 public class ProductEntity {
-    protected enum STATUS {VERY_POOR, POOR, FAIR, GOOD, EXCELLENT}
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
-    @Length(max = 20)
-    private String product_name;
+    private Long userId;
 
     @NotNull
     private String productAddress;
 
     @NotNull
-    private String product_title;
+    private String productTitle;
 
-    private String product_description;
+    @Length(max = 10000)
+    private String productDescription;
 
-    private String product_image;
+    private String productImage;
 
     @NotNull
-    private STATUS product_status;
+    private ProductStatus productStatus;
 
     private Long views;
 }

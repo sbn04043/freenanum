@@ -1,10 +1,9 @@
-package shop.freenanum.model.entity;
+package shop.freenanum.trade.model.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
 
 @Entity
 @Getter
@@ -17,30 +16,33 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
     @NotNull
-    @Length(max = 20)
+    @Length(max = 40)
     private String email;
 
     @NotNull
     private String password;
 
     @NotNull
-    @Length(max = 20)
-    private String name;
+    @Length(max = 40)
+    private String userName;
 
-    @Length(max = 15)
+    @Length(max = 40)
     private String phone;
 
     // 프로필
-    private String url;
+    private String userImg;
 
-    private Integer giveCount;
+    private Long giveCount;
 
-    private Integer receiveCount;
+    private Long receiveCount;
 
     private Double score;
 
     private String userAddress;
+
+    @Length(max = 20)
+    private String gender;
 }
