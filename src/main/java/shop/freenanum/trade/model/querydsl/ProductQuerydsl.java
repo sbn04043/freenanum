@@ -9,7 +9,7 @@ public interface ProductQuerydsl {
 
     List<ProductEntity> getList();
 
-    ProductEntity getById(Long id);
+    ProductEntity getByProductId(Long id);
 
     boolean existsProduct(Long id);
 

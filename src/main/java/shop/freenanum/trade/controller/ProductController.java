@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import shop.freenanum.trade.model.domain.ProductModel;
 import shop.freenanum.trade.model.repository.ProductRepository;
@@ -26,5 +27,12 @@ public class ProductController {
                         .views(productEntity.getViews())
                         .build()).toList());
         return "products/list";
+    }
+
+    @GetMapping("/{id}")
+    public String showOne(Model model, @PathVariable Long id) {
+        model.addAttribute("product", ProductModel.toModel(productRepository.getByProductId(id)));
+
+        return "products/showOne";
     }
 }

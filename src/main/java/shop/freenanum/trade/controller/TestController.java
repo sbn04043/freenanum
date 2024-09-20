@@ -77,16 +77,23 @@ public class TestController {
                 String link = linkElements.first().attr("href");
                 Document productDoc = Jsoup.connect("https://www.daangn.com" + link).get();
                 Elements descElements = productDoc.select("div#article-detail").select("p");
+                Elements imgElements = productDoc.select("img.portrait");
+
+                System.out.println(link + ": ");
+                for (Element imgElement : imgElements) {
+                    String imgUrl = imgElement.attr("src");
+                    System.out.println(imgUrl);
+                }
 
 
-                productRepository.save(ProductEntity.builder()
-                        .userId(1L)
-                        .productTitle(titles.next().text())
-                        .productAddress(addresses.next().text())
-                        .productDescription(String.valueOf(descElements))
-                        .productStatus(ProductStatus.GOOD)
-                        .views(0L)
-                        .build());
+//                productRepository.save(ProductEntity.builder()
+//                        .userId(1L)
+//                        .productTitle(titles.next().text())
+//                        .productAddress(addresses.next().text())
+//                        .productDescription(String.valueOf(descElements))
+//                        .productStatus(ProductStatus.GOOD)
+//                        .views(0L)
+//                        .build());
 
                 linkElements.remove(0);
             }

@@ -30,8 +30,6 @@ public class ProductEntity {
     @Length(max = 10000)
     private String productDescription;
 
-    private String productImage;
-
     @NotNull
     private ProductStatus productStatus;
 

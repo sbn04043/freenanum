@@ -30,7 +30,7 @@ public class ProductQuerydslImpl implements ProductQuerydsl {
     }
 
     @Override
-    public ProductEntity getById(Long id) {
+    public ProductEntity getByProductId(Long id) {
         return jpaQueryFactory
                 .selectFrom(qProductEntity)
                 .where(qProductEntity.id.eq(id))
@@ -39,7 +39,7 @@ public class ProductQuerydslImpl implements ProductQuerydsl {
 
     @Override
     public boolean existsProduct(Long id) {
-        return getById(id) != null;
+        return getByProductId(id) != null;
     }
 
     @Override
