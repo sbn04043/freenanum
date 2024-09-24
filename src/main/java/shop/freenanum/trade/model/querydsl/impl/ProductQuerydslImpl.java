@@ -1,5 +1,6 @@
 package shop.freenanum.trade.model.querydsl.impl;
 
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import shop.freenanum.trade.model.entity.ProductEntity;
@@ -54,6 +55,24 @@ public class ProductQuerydslImpl implements ProductQuerydsl {
         return jpaQueryFactory
                 .selectFrom(qProductEntity)
                 .where(qProductEntity.userId.eq(userId))
+                .fetch();
+    }
+
+    @Override
+    public List<ProductEntity> search(int pageNo, String locationInput, String productInput) {
+        BooleanBuilder builder = new BooleanBuilder();
+
+        if (locationInput != null && !locationInput.isEmpty()) {
+            builder.and(qProductEntity.productAddress.contains(locationInput));
+        }
+
+        if (productInput != null && !productInput.isEmpty()) {
+            builder.and(qProductEntity.productTitle.contains(productInput));
+        }
+
+        return jpaQueryFactory
+                .selectFrom(qProductEntity)
+                .where(builder)
                 .fetch();
     }
 }

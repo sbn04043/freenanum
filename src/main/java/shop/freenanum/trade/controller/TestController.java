@@ -85,16 +85,6 @@ public class TestController {
                     System.out.println(imgUrl);
                 }
 
-
-//                productRepository.save(ProductEntity.builder()
-//                        .userId(1L)
-//                        .productTitle(titles.next().text())
-//                        .productAddress(addresses.next().text())
-//                        .productDescription(String.valueOf(descElements))
-//                        .productStatus(ProductStatus.GOOD)
-//                        .views(0L)
-//                        .build());
-
                 linkElements.remove(0);
             }
 

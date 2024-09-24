@@ -26,7 +26,7 @@ public class ProductController {
                         .productStatus(productEntity.getProductStatus())
                         .views(productEntity.getViews())
                         .build()).toList());
-        return "products/list";
+        return "products/hotList";
     }
 
     @GetMapping("/{id}")

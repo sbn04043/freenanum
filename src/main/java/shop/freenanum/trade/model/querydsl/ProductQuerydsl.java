@@ -16,4 +16,6 @@ public interface ProductQuerydsl {
     long getRowCount();
 
     List<ProductEntity> getByUserId(Long userId);
+
+    List<ProductEntity> search(int pageNo, String locationInput, String productInput);
 }
