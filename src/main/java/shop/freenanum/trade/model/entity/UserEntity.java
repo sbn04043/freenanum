@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
+import shop.freenanum.trade.model.domain.UserModel;
 
 @Entity
 @Getter
@@ -33,11 +34,11 @@ public class UserEntity {
     private String phone;
 
     // 프로필
-    private String userImg;
+    private String url;
 
-    private Long giveCount;
+    private Long sellCount;
 
-    private Long receiveCount;
+    private Long buyCount;
 
     private Double score;
 
@@ -45,4 +46,18 @@ public class UserEntity {
 
     @Length(max = 20)
     private String gender;
+
+    public static UserEntity toRegisterEntity(UserModel userModel) {
+        return UserEntity.builder()
+                .email(userModel.getEmail())
+                .password(userModel.getPassword())
+                .userName(userModel.getUserName())
+                .phone(userModel.getPhone())
+                .sellCount(0L)
+                .buyCount(0L)
+                .score(0.0)
+                .userAddress(userModel.getUserAddress())
+                .gender(userModel.getGender())
+                .build();
+    }
 }

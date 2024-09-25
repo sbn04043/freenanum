@@ -33,5 +33,7 @@ public class ProductEntity {
     @NotNull
     private ProductStatus productStatus;
 
+    private Long price;
+
     private Long views;
 }

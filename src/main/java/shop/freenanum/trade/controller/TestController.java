@@ -47,8 +47,8 @@ public class TestController {
                     .password(user.get("login").get("password").asText())
                     .userName(user.path("name").path("first").asText() + " " + user.path("name").path("last").asText())
                     .phone(user.path("phone").asText())
-                    .giveCount(0L)
-                    .receiveCount(0L)
+                    .sellCount(0L)
+                    .buyCount(0L)
                     .userAddress(user.path("location").path("country").asText() + " "
                             + user.path("location").path("state").asText() + " "
                             + user.path("location").path("city").asText() + " "

@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Optional;
 
 public interface UserService {
+    UserModel findByEmail(String email);
+
     List<UserEntity> findAll();
 
     UserEntity save(UserEntity user);

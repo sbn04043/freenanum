@@ -16,4 +16,6 @@ public interface UserQuerydsl {
     long getRowCount();
 
     Optional<UserEntity> getByAddress(ProductEntity product);
+
+    UserEntity findByEmail(String email);
 }

@@ -1,14 +1,26 @@
 package shop.freenanum.trade.service.impl;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 import shop.freenanum.trade.model.domain.UserModel;
 import shop.freenanum.trade.model.entity.UserEntity;
+import shop.freenanum.trade.model.repository.UserRepository;
 import shop.freenanum.trade.service.UserService;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+@Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
+    private final UserRepository userRepository;
+
+    @Override
+    public UserModel findByEmail(String email) {
+        return UserModel.toModel(userRepository.findByEmail(email));
+    }
+
     @Override
     public List<UserEntity> findAll() {
         return List.of();
@@ -21,7 +33,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<UserEntity> findById(Long id) {
-        return Optional.empty();
+        return userRepository.findById(id);
     }
 
     @Override

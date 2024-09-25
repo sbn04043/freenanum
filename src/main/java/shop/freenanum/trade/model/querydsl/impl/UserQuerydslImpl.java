@@ -12,31 +12,40 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 public class UserQuerydslImpl implements UserQuerydsl {
-    private final JPAQueryFactory jpqQueryFactory;
+    private final JPAQueryFactory jpaQueryFactory;
     private QUserEntity qUser = QUserEntity.userEntity;
 
     @Override
     public List<UserEntity> getList() {
-        return jpqQueryFactory.selectFrom(qUser).fetch();
+        return jpaQueryFactory.selectFrom(qUser).fetch();
     }
 
     @Override
     public UserEntity getById(Long id) {
-        return jpqQueryFactory.selectFrom(qUser).where(qUser.id.eq(id)).fetchOne();
+        return jpaQueryFactory.selectFrom(qUser).where(qUser.id.eq(id)).fetchOne();
     }
 
     @Override
     public boolean existsUser(Long id) {
-        return !jpqQueryFactory.selectFrom(qUser).where(qUser.id.eq(id)).fetch().isEmpty();
+        return !jpaQueryFactory.selectFrom(qUser).where(qUser.id.eq(id)).fetch().isEmpty();
     }
 
     @Override
     public long getRowCount() {
-        return jpqQueryFactory.select(qUser.id.count()).from(qUser).fetchCount();
+        return jpaQueryFactory.select(qUser.id.count()).from(qUser).fetchCount();
     }
 
     @Override
     public Optional<UserEntity> getByAddress(ProductEntity product) {
-        return Optional.ofNullable(jpqQueryFactory.selectFrom(qUser).where(qUser.userAddress.eq(product.getProductAddress())).fetchFirst());
+        return Optional.ofNullable(jpaQueryFactory.selectFrom(qUser).where(qUser.userAddress.eq(product.getProductAddress())).fetchFirst());
+    }
+
+    @Override
+    public UserEntity findByEmail(String email) {
+        return jpaQueryFactory
+                .selectFrom(qUser)
+                .where(qUser.email.eq(email))
+                .fetchOne();
+
     }
 }
