@@ -17,7 +17,7 @@ public class LocationQuerydslImpl implements LocationQuerydsl {
     public List<LocationEntity> getSearchList(String locationName) {
         return jpaQueryFactory.selectFrom(qLocation)
                 .where(qLocation.locationName.like("%" + locationName + "%"))
-                .orderBy(qLocation.id.asc())
+                .orderBy(qLocation.locationName.length().asc())
                 .limit(10)
                 .fetch();
 

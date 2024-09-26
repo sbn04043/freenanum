@@ -22,4 +22,6 @@ public interface ProductService {
     void deleteById(Long id);
 
     Map<?, ?> login(UserModel model);
+
+    void productCrawling();
 }

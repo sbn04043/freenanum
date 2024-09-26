@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Optional;
 
 public interface UserService {
+    String login(String username, String password);
+
     UserModel findByEmail(String email);
 
     List<UserEntity> findAll();
@@ -21,6 +23,4 @@ public interface UserService {
     long count();
 
     void deleteById(Long id);
-
-    Map<?, ?> login(UserModel model);
 }

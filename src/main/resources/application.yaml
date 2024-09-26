@@ -20,7 +20,6 @@ spring:
     prefix: classpath:/templates/
     suffix: .html
     enabled: true
-
   jpa:
     hibernate:
       ddl-auto: update
@@ -33,15 +32,16 @@ spring:
         order_updates: true
         jdbc:
           batch_size: 100
-
     show-sql: true
-
   sql:
     init:
       mode: always
-
   jackson:
     time-zone: UTC
+  mvc:
+    static-path-pattern: /image/**
+jwt:
+  secret: V/CjhO4NzYQDTxd91K+voBmi9BE7gRj2i65sNvKHOd8=
 
 springdoc:
   swagger-ui:
@@ -61,3 +61,4 @@ springdoc:
   model-and-view-allowed: true
   paths-to-match:
     - /**
+

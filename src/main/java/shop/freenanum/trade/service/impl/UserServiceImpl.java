@@ -1,6 +1,7 @@
 package shop.freenanum.trade.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import shop.freenanum.trade.model.domain.UserModel;
 import shop.freenanum.trade.model.entity.UserEntity;
@@ -15,6 +16,18 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    @Override
+    public String login(String email, String password) {
+        // 실제 사용자 인증 로직을 구현 (예: DB 조회)
+        // 예시: 기본 사용자 "test"와 비밀번호 "password" 사용
+        UserEntity userEntity = userRepository.findByEmail(email);
+        if (userEntity != null && passwordEncoder.matches(password, userEntity.getPassword())) {
+            return email;
+        }
+        throw new RuntimeException("Invalid credentials");
+    }
 
     @Override
     public UserModel findByEmail(String email) {
@@ -49,10 +62,5 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteById(Long id) {
 
-    }
-
-    @Override
-    public Map<?, ?> login(UserModel model) {
-        return Map.of();
     }
 }

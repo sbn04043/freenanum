@@ -20,12 +20,11 @@ public class ProductEntity {
     private Long id;
 
     private Long userId;
+    @NotNull
+    private String productTitle;
 
     @NotNull
     private String productAddress;
-
-    @NotNull
-    private String productTitle;
 
     @Length(max = 10000)
     private String productDescription;

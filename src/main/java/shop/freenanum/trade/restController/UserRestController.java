@@ -8,7 +8,7 @@ import shop.freenanum.trade.service.UserService;
 import shop.freenanum.trade.util.JwtUtil;
 
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/api/users")
 @RequiredArgsConstructor
 public class UserRestController {
     private final UserService userService;
@@ -17,11 +17,8 @@ public class UserRestController {
 
     @PostMapping("/login")
     public String login(@RequestBody UserModel userModel) {
-        UserModel foundUser = userService.findByEmail(userModel.getEmail());
-        if (foundUser != null && passwordEncoder.matches(userModel.getPassword(), foundUser.getPassword())) {
-            return jwtUtil.generateToken(foundUser.getEmail(), foundUser.getId());
-        }
-        throw new RuntimeException("Invalid credentials");
+        String username = userService.login(userModel.getEmail(), userModel.getPassword());
+        return jwtUtil.generateToken(username);
     }
 
     @GetMapping("/isValidateEmail")

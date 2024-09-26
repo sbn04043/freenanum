@@ -18,15 +18,15 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/**").permitAll()
-                        //.anyRequest().authenticated()
-                        .anyRequest().permitAll()
-                )
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
-                .csrf(AbstractHttpConfigurer::disable); // CSRF 보호 비활성화
+                .csrf(AbstractHttpConfigurer::disable) // CSRF 비활성화
+                .authorizeHttpRequests(auth -> auth
+                                .requestMatchers("/api/users/login").permitAll() // 로그인 엔드포인트 허용
+                                .requestMatchers("/images/**").permitAll()
+                                .anyRequest().permitAll()
+
+                        //.anyRequest().authenticated() // 다른 모든 요청은 인증 필요
+                );
+
         return http.build();
     }
 

@@ -7,6 +7,14 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.openqa.selenium.By;
+import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,9 +25,12 @@ import shop.freenanum.trade.model.entity.UserEntity;
 import shop.freenanum.trade.model.enumeration.ProductStatus;
 import shop.freenanum.trade.model.repository.ProductRepository;
 import shop.freenanum.trade.model.repository.UserRepository;
+import shop.freenanum.trade.service.impl.ProductImageServiceImpl;
+import shop.freenanum.trade.service.impl.ProductServiceImpl;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.sql.SQLOutput;
+import java.time.Duration;
 import java.util.Iterator;
 import java.util.List;
 
@@ -29,6 +40,8 @@ import java.util.List;
 public class TestController {
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
+    private final ProductImageServiceImpl productImageServiceImpl;
+    private final ProductServiceImpl productServiceImpl;
 
     @GetMapping("/userCrawling")
     public String userCrawling(Model model) throws IOException {
@@ -65,34 +78,10 @@ public class TestController {
 
     @GetMapping("/productCrawling")
     public String productCrawling(Model model) throws IOException {
-        try {
-            Document productsDoc = Jsoup.connect("https://www.daangn.com/hot_articles").get();
-            Elements elements = productsDoc.select("section.cards-wrap");
-            Elements linkElements = productsDoc.select("a.card-link");
+        productServiceImpl.productCrawling();
 
-            Iterator<Element> titles = elements.select("h2").iterator();
-            Iterator<Element> addresses = elements.select("div.card-region-name").iterator();
 
-            while (!linkElements.isEmpty()) {
-                String link = linkElements.first().attr("href");
-                Document productDoc = Jsoup.connect("https://www.daangn.com" + link).get();
-                Elements descElements = productDoc.select("div#article-detail").select("p");
-                Elements imgElements = productDoc.select("img.portrait");
-
-                System.out.println(link + ": ");
-                for (Element imgElement : imgElements) {
-                    String imgUrl = imgElement.attr("src");
-                    System.out.println(imgUrl);
-                }
-
-                linkElements.remove(0);
-            }
-
-            return "test/productCrawling";
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            return "스크래핑 실패";
-        }
+        return "/products/searchList";
     }
 }
+

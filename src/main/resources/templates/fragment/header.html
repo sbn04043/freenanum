@@ -94,9 +94,17 @@
                             <label for="productInput"></label>
                             <input type="text" id="productInput" class="form-control me-2"
                                    name="productInput" placeholder="상품 이름"/>
-                            <button type="submit" class="btn btn-primary">검색</button>
+                            <button type="submit" class="btn btn-outline-dark m-auto">검색</button>
                         </form>
-                        <div class="list-group" id="locationResult" style="display: none;"></div>
+                        <div class="list-group" id="locationResult"
+                             style="display: none;
+                              position: absolute;
+                               z-index: 1000;
+                                background: white;
+                                 max-height: 200px;
+                                  overflow-y: auto;
+                                   border: 1px solid #ccc;
+                                    border-radius: 5px;"></div>
                     </li>
                 </ul>
                 <form class="d-flex">
