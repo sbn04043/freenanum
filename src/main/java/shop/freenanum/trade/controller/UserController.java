@@ -51,12 +51,4 @@ public class UserController {
     public String login() {
         return "users/login";
     }
-
-//    @GetMapping("/info")
-//    public String getUserInfo(@RequestHeader("Authorization") String token, Model model) {
-//        String jwtToken = token.substring(7); // "Bearer " 제거
-//        Long userId = jwtUtil.extractUserId(jwtToken);
-//        model.addAttribute("user", userService.findById(userId));
-//        return "/users/info";
-//    }
 }

@@ -26,7 +26,7 @@ public class UserServiceImpl implements UserService {
         if (userEntity != null && passwordEncoder.matches(password, userEntity.getPassword())) {
             return email;
         }
-        throw new RuntimeException("Invalid credentials");
+        throw new RuntimeException("Invalid");
     }
 
     @Override

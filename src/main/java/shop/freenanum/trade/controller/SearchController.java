@@ -18,8 +18,9 @@ public class SearchController {
                                  @RequestParam String productInput,
                                  Model model) {
 
-        model.addAttribute("productList", productRepository.search(pageNo, locationInput, productInput));
+        model.addAttribute("products", productRepository.search(pageNo, locationInput, productInput));
 
         return "/products/searchList";
     }
+
 }

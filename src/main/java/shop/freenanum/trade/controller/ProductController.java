@@ -22,11 +22,11 @@ public class ProductController {
     private final ProductImageRepository productImageRepository;
 
     @GetMapping("/{id}")
-    public String showProduct(@PathVariable Long id, Model model) {
+    public String showProduct(@PathVariable("id") Long id, Model model) {
         model.addAttribute("product", productRepository.findById(id));
         model.addAttribute("productImgUrls", productImageRepository.findByProductId(id).stream()
                 .map(ProductImgEntity::getProductImg).toList());
-        return "/products/showOne";
+        return "products/showOne";
     }
 
 

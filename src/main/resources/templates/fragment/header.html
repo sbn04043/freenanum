@@ -65,7 +65,7 @@
 
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container px-4 px-lg-5">
-            <a class="navbar-brand" href="#!">Free Nanum</a>
+            <a class="navbar-brand" href="/api/products/list">Free Trade</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                     aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span>
@@ -87,13 +87,13 @@
                         </ul>
                     </li>
                     <li class="nav-item">
-                        <form action="/api/search/products" class="d-flex align-items-center">
+                        <form th:action="@{/api/search/products/1}" method="get" class="d-flex align-items-center">
                             <label for="locationInput"></label>
                             <input type="text" id="locationInput" class="form-control me-2" placeholder="주소 입력"
-                                   name="locationInput" onkeyup="getLocationList()"/>
+                                   name="locationInput" onkeyup="getLocationList()" required/>
                             <label for="productInput"></label>
                             <input type="text" id="productInput" class="form-control me-2"
-                                   name="productInput" placeholder="상품 이름"/>
+                                   name="productInput" placeholder="상품 이름" required/>
                             <button type="submit" class="btn btn-outline-dark m-auto">검색</button>
                         </form>
                         <div class="list-group" id="locationResult"
