@@ -20,6 +20,11 @@ spring:
     prefix: classpath:/templates/
     suffix: .html
     enabled: true
+  devtools:
+    livereload:
+      enabled: true
+    restart:
+      enabled: true
   jpa:
     hibernate:
       ddl-auto: update

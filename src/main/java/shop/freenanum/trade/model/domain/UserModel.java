@@ -20,7 +20,9 @@ public class UserModel {
 
     private String password;
 
-    private String userName;
+    private String username;
+
+    private String nickname;
 
     private String phone;
 
@@ -42,7 +44,8 @@ public class UserModel {
                 .id(userEntity.getId())
                 .email(userEntity.getEmail())
                 .password(userEntity.getPassword())
-                .userName(userEntity.getUserName())
+                .username(userEntity.getUsername())
+                .nickname(userEntity.getNickname())
                 .phone(userEntity.getPhone())
                 .url(userEntity.getUrl())
                 .sellCount(userEntity.getSellCount())

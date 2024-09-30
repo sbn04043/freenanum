@@ -11,6 +11,9 @@ import shop.freenanum.trade.model.domain.ProductModel;
 import shop.freenanum.trade.model.entity.ProductImgEntity;
 import shop.freenanum.trade.model.repository.ProductImageRepository;
 import shop.freenanum.trade.model.repository.ProductRepository;
+import shop.freenanum.trade.model.repository.UserRepository;
+import shop.freenanum.trade.service.ProductService;
+import shop.freenanum.trade.service.UserService;
 
 import java.util.List;
 
@@ -20,12 +23,13 @@ import java.util.List;
 public class ProductController {
     private final ProductRepository productRepository;
     private final ProductImageRepository productImageRepository;
+    private final ProductService productService;
+    private final UserRepository userRepository;
 
     @GetMapping("/{id}")
     public String showProduct(@PathVariable("id") Long id, Model model) {
-        model.addAttribute("product", productRepository.findById(id));
-        model.addAttribute("productImgUrls", productImageRepository.findByProductId(id).stream()
-                .map(ProductImgEntity::getProductImg).toList());
+        model.addAttribute("product", productRepository.getProductWithNickname(id));
+        model.addAttribute("productImgUrls", productImageRepository.findByProductId(id));
         return "products/showOne";
     }
 
@@ -39,6 +43,7 @@ public class ProductController {
                         .productAddress(productEntity.getProductAddress())
                         .productStatus(productEntity.getProductStatus())
                         .views(productEntity.getViews())
+                        .imgUrl(productImageRepository.getOneById(productEntity.getId()))
                         .build()).toList());
         return "products/hotList";
     }

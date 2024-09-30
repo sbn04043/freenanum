@@ -24,4 +24,6 @@ public interface ProductService {
     Map<?, ?> login(UserModel model);
 
     void productCrawling();
+
+
 }

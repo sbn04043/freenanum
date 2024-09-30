@@ -5,6 +5,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet"/>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
     <link th:href="@{/css/styles.css}" rel="stylesheet"/>
     <style>
         .image-slider-container {
@@ -24,6 +25,7 @@
         img {
             width: 100%;
             height: auto;
+            object-fit: cover;
         }
 
         .slider-button {
@@ -45,6 +47,32 @@
         h3 {
             text-align: center;
         }
+
+        .card {
+            border-radius: 15px; /* 모서리 둥글게 */
+        }
+
+        .card-title {
+            font-size: 1.5rem; /* 제목 크기 조정 */
+            font-weight: bold; /* 제목 두껍게 */
+        }
+
+        .card-text {
+            font-size: 1.1rem; /* 본문 크기 조정 */
+            margin-bottom: 10px; /* 간격 추가 */
+        }
+
+        .profile-image {
+            width: 40px;
+            height: 40px;
+        }
+
+        /* 작은 화면에서 카드 중앙 정렬 */
+        @media (max-width: 768px) {
+            .card {
+                margin: 10px; /* 간격 조정 */
+            }
+        }
     </style>
 </head>
 <body>
@@ -57,42 +85,87 @@
 
     <!-- 이미지 카드 -->
     <div class="image-card">
-        <img th:src="@{'/images/productImage/' + ${productImgUrls[0]}}" alt="Uploaded Image" id="image-slider"/>
+        <img th:src="@{'/images/productImage/' + ${productImgUrls[0].productImg}}" alt="Uploaded Image"
+             id="image-slider"/>
     </div>
 
     <!-- 오른쪽 버튼 -->
     <button class="slider-button right-button" onclick="nextImage()">&#9654;</button>
 </div>
 
-<script>
+<div class="container mt-4">
+    <div class="row" style="align-items: center; justify-content: center; margin-top: 20px;">
+        <!-- 사용자 정보 카드 -->
+        <div class="col-md-6">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body d-flex align-items-center">
+                    <div class="row d-flex justify-content-center align-items-center">
+                        <div class="col-auto">
+                            <img th:src="@{/images/profile/userDefaultImg.png}" alt="프로필 사진"
+                                 class="rounded-circle me-2 profile-image"/>
+                        </div>
+                        <div class="col-auto">
+                            <h6 class="card-title mb-0" th:text="${product.nickname}">닉네임</h6>
+                        </div>
+                        <div class="col-auto ms-auto text-end">
+                            <p class="card-text mb-0" th:text="${'점수: 0.0'}"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 상품 정보 카드 -->
+<div class="container mt-4">
+    <div class="row" style="justify-content: center; margin-top: 20px;">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${product.productTitle}">상품 이름</h5>
+                    <p class="card-text" th:text="${product.productAddress}">주소</p>
+                    <p class="card-text" th:text="${product.productDescription}">상품 설명</p>
+                    <p class="card-text"><strong>가격: </strong><span th:text="${product.price} + '원'"></span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer-->
+<div th:replace="~{/fragment/footer :: footer}"></div>
+
+<script th:inline="javascript">
     // JavaScript 배열로 이미지 URL 리스트 저장
-    let currentIndex = 0;
     const imageUrls = /*[[${productImgUrls}]]*/ [];
-    console.log(imageUrls);
+    if (imageUrls.length === 0) {
+        console.error('이미지가 없습니다.');
+    }
+
+    let currentIndex = 0;
 
     // 이미지 업데이트 함수
     function updateImage() {
         const imgElement = document.getElementById('image-slider');
-        const urlElement = document.getElementById('image-url');
-
-        imgElement.src = '/images/productImage/' + imageUrls[currentIndex];
-        urlElement.innerText = imageUrls[currentIndex];
+        imgElement.src = '/images/productImage/' + imageUrls[currentIndex].productImg;
     }
 
     // 왼쪽 버튼을 눌렀을 때
     function prevImage() {
-        if (currentIndex > 0) {
-            currentIndex--;
-            updateImage();
+        currentIndex--;
+        if (currentIndex < 0) {
+            currentIndex += imageUrls.length;
         }
+        updateImage();
     }
 
     // 오른쪽 버튼을 눌렀을 때
     function nextImage() {
-        if (currentIndex < imageUrls.length - 1) {
-            currentIndex++;
-            updateImage();
+        currentIndex++;
+        if (currentIndex >= imageUrls.length) {
+            currentIndex -= imageUrls.length;
         }
+        updateImage();
     }
 </script>
 

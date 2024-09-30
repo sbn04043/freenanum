@@ -28,7 +28,10 @@ public class UserEntity {
 
     @NotNull
     @Length(max = 40)
-    private String userName;
+    private String username;
+
+    @NotNull
+    private String nickname;
 
     @Length(max = 40)
     private String phone;
@@ -51,7 +54,7 @@ public class UserEntity {
         return UserEntity.builder()
                 .email(userModel.getEmail())
                 .password(userModel.getPassword())
-                .userName(userModel.getUserName())
+                .username(userModel.getUsername())
                 .phone(userModel.getPhone())
                 .sellCount(0L)
                 .buyCount(0L)

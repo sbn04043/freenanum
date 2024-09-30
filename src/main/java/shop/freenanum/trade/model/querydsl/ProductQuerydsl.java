@@ -1,10 +1,15 @@
 package shop.freenanum.trade.model.querydsl;
 
+import shop.freenanum.trade.model.domain.ProductModel;
 import shop.freenanum.trade.model.entity.ProductEntity;
 
 import java.util.List;
 
 public interface ProductQuerydsl {
+    ProductModel getProductWithImgUrl(Long id);
+
+    ProductModel getProductWithNickname(Long id);
+
     List<ProductEntity> getHotList();
 
     List<ProductEntity> getList();

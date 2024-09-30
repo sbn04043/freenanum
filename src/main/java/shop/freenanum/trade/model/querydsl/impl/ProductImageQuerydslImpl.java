@@ -22,4 +22,14 @@ public class ProductImageQuerydslImpl implements ProductImageQuerydsl {
                 .where(qProductImg.productId.eq(id))
                 .fetch();
     }
+
+    @Override
+    public String getOneById(Long id) {
+        return jpaQueryFactory
+                .select(qProductImg.productImg)
+                .from(qProductImg)
+                .where(qProductImg.productId.eq(id))
+                .limit(1)
+                .fetchOne();
+    }
 }

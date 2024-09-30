@@ -13,16 +13,20 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.stereotype.Service;
+import shop.freenanum.trade.model.domain.ProductModel;
 import shop.freenanum.trade.model.domain.UserModel;
 import shop.freenanum.trade.model.entity.ProductEntity;
+import shop.freenanum.trade.model.entity.ProductImgEntity;
 import shop.freenanum.trade.model.entity.UserEntity;
 import shop.freenanum.trade.model.enumeration.ProductStatus;
+import shop.freenanum.trade.model.repository.ProductImageRepository;
 import shop.freenanum.trade.model.repository.ProductRepository;
 import shop.freenanum.trade.service.ProductImageService;
 import shop.freenanum.trade.service.ProductService;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -32,6 +36,7 @@ import java.util.Optional;
 public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final ProductImageService productImageService;
+    private final ProductImageRepository productImageRepository;
 
     @Override
     public List<ProductEntity> findAll() {
@@ -138,4 +143,6 @@ public class ProductServiceImpl implements ProductService {
             }
         }
     }
+
+
 }

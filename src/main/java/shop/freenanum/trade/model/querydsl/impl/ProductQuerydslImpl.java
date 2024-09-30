@@ -1,10 +1,14 @@
 package shop.freenanum.trade.model.querydsl.impl;
 
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import shop.freenanum.trade.model.domain.ProductModel;
 import shop.freenanum.trade.model.entity.ProductEntity;
 import shop.freenanum.trade.model.entity.QProductEntity;
+import shop.freenanum.trade.model.entity.QProductImgEntity;
+import shop.freenanum.trade.model.entity.QUserEntity;
 import shop.freenanum.trade.model.querydsl.ProductQuerydsl;
 
 import java.util.List;
@@ -13,6 +17,54 @@ import java.util.List;
 public class ProductQuerydslImpl implements ProductQuerydsl {
     private final JPAQueryFactory jpaQueryFactory;
     private QProductEntity qProductEntity = QProductEntity.productEntity;
+    private QUserEntity qUserEntity = QUserEntity.userEntity;
+    private QProductImgEntity qProductImgEntity = QProductImgEntity.productImgEntity;
+
+    @Override
+    public ProductModel getProductWithImgUrl(Long id) {
+        return jpaQueryFactory
+                .select(Projections.constructor(
+                        ProductModel.class,
+                        qProductEntity.id,
+                        qProductEntity.userId,
+                        qProductEntity.productTitle,
+                        qProductEntity.productAddress,
+                        qProductEntity.productDescription,
+                        qProductEntity.productStatus,
+                        qProductEntity.price,
+                        qProductEntity.views,
+                        qProductImgEntity.productImg // imgUrl로 설정
+                ))
+                .from(qProductEntity)
+                .leftJoin(qProductImgEntity).on(qProductImgEntity.productId.eq(qProductEntity.id)) // 여기서 ID를 비교
+                .where(qProductEntity.id.eq(id))
+                .limit(1)
+                .fetchOne();
+    }
+
+    @Override
+    public ProductModel getProductWithNickname(Long id) {
+        return jpaQueryFactory
+                .select(Projections.constructor(
+                        ProductModel.class,
+                        qProductEntity.id,
+                        qProductEntity.userId,
+                        qProductEntity.productTitle,
+                        qProductEntity.productAddress,
+                        qProductEntity.productDescription,
+                        qProductEntity.productStatus,
+                        qProductEntity.price,
+                        qProductEntity.views,
+                        qUserEntity.nickname, // nickname
+                        qProductImgEntity.productImg // imgUrl로 설정
+                ))
+                .from(qProductEntity)
+                .leftJoin(qUserEntity).on(qProductEntity.userId.eq(qUserEntity.id))
+                .leftJoin(qProductImgEntity).on(qProductImgEntity.productId.eq(qProductEntity.id)) // 여기서 ID를 비교
+                .where(qProductEntity.id.eq(id))
+                .limit(1)
+                .fetchOne();
+    }
 
     @Override
     public List<ProductEntity> getHotList() {
