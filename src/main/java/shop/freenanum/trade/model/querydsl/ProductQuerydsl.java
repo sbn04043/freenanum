@@ -6,6 +6,8 @@ import shop.freenanum.trade.model.entity.ProductEntity;
 import java.util.List;
 
 public interface ProductQuerydsl {
+    Long searchCount(String locationInput, String productInput);
+
     ProductModel getProductWithImgUrl(Long id);
 
     ProductModel getProductWithNickname(Long id);
@@ -22,5 +24,5 @@ public interface ProductQuerydsl {
 
     List<ProductEntity> getByUserId(Long userId);
 
-    List<ProductEntity> search(int pageNo, String locationInput, String productInput);
+    List<ProductEntity> search(Long pageNo, String locationInput, String productInput);
 }

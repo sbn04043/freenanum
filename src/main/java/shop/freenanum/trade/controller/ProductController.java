@@ -3,33 +3,47 @@ package shop.freenanum.trade.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.w3c.dom.stylesheets.LinkStyle;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import shop.freenanum.trade.model.domain.ProductModel;
-import shop.freenanum.trade.model.entity.ProductImgEntity;
+import shop.freenanum.trade.model.entity.ProductEntity;
 import shop.freenanum.trade.model.repository.ProductImageRepository;
 import shop.freenanum.trade.model.repository.ProductRepository;
 import shop.freenanum.trade.model.repository.UserRepository;
+import shop.freenanum.trade.service.ProductImageService;
 import shop.freenanum.trade.service.ProductService;
-import shop.freenanum.trade.service.UserService;
-
-import java.util.List;
 
 @Controller
 @RequestMapping("/api/products")
 @RequiredArgsConstructor
 public class ProductController {
+    private final ProductService productService;
+    private final ProductImageService productImageService;
     private final ProductRepository productRepository;
     private final ProductImageRepository productImageRepository;
-    private final ProductService productService;
     private final UserRepository userRepository;
+
+    @PostMapping("/upload")
+    public String register(@RequestBody ProductModel productModel, Model model, MultipartFile multipartFile) {
+        Long productId = productService.save(ProductEntity.toUploadEntity(productModel)).getId();
+        productImageService.saveImage(productId, multipartFile);
+
+        return "redirect:/api/products/" + productId;
+    }
+
+    @GetMapping("/upload")
+    public String register() {
+        return "products/upload";
+    }
 
     @GetMapping("/{id}")
     public String showProduct(@PathVariable("id") Long id, Model model) {
+        System.out.println("product");
         model.addAttribute("product", productRepository.getProductWithNickname(id));
+        System.out.println("productImg");
         model.addAttribute("productImgUrls", productImageRepository.findByProductId(id));
+        System.out.println("product done");
+
         return "products/showOne";
     }
 

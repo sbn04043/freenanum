@@ -3476,7 +3476,7 @@ textarea.form-control-lg {
     --bs-btn-disabled-color: #212529;
     --bs-btn-disabled-bg: transparent;
     --bs-btn-disabled-border-color: #212529;
-    --bs-gradient: none;
+    --bs-gradient: none
 }
 
 .btn-link {
@@ -12410,4 +12410,142 @@ textarea.form-control-lg {
     .d-print-none {
         display: none !important;
     }
+}
+
+/*my css*/
+.chat-container {
+    display: flex;
+    height: calc(100vh - 120px); /* Adjusted height */
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+.user-list {
+    width: 30%;
+    border-right: 1px solid #ccc;
+    overflow-y: auto;
+    background-color: #ffffff; /* 배경색을 흰색으로 설정 */
+    padding: 15px; /* 패딩 추가 */
+}
+
+.user-item {
+    padding: 12px; /* 패딩 */
+    border-radius: 8px; /* 둥글게 모서리 처리 */
+    margin: 5px 0; /* 상하 여백 */
+    background-color: #f8f9fa; /* 기본 배경색 */
+    transition: background-color 0.3s ease; /* 배경색 변화 애니메이션 */
+    cursor: pointer; /* 커서 모양 변경 */
+    display: flex; /* Flexbox 사용 */
+    align-items: center; /* 세로 정렬 */
+}
+
+.user-item:hover {
+    background-color: #e9ecef; /* 마우스 오버 시 배경색 변경 */
+}
+
+.user-item.selected {
+    background-color: #007bff; /* 선택된 경우 배경색 */
+    color: white; /* 텍스트 색상 변경 */
+    font-weight: bold; /* 텍스트 두껍게 */
+}
+
+.user-item img {
+    border-radius: 50%; /* 프로필 이미지를 둥글게 */
+    width: 40px; /* 이미지 너비 */
+    height: 40px; /* 이미지 높이 */
+    margin-right: 10px; /* 이미지와 텍스트 간 여백 */
+}
+
+.chat-box {
+    width: 70%;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    background-color: #fff;
+    border-left: 1px solid #ddd;
+    overflow-y: auto;
+}
+
+.messages {
+    flex-grow: 1;
+    overflow-y: auto;
+    margin-bottom: 70px; /* 입력창 높이만큼 여유 공간 */
+}
+
+.message-container {
+    display: flex;
+    margin-bottom: 10px;
+    align-items: flex-start;
+}
+
+.message-container.user {
+    justify-content: flex-end;
+}
+
+.message {
+    padding: 10px 15px;
+    border-radius: 20px;
+    display: inline-block;
+    max-width: 60%;
+    word-wrap: break-word;
+}
+
+.message.user {
+    background-color: #007bff;
+    color: white;
+    text-align: right;
+}
+
+.message.other {
+    background-color: #f1f0f0;
+    color: #333;
+    text-align: left;
+}
+
+.message-time {
+    font-size: 12px;
+    color: #888;
+    margin-top: 5px;
+}
+
+.input-group {
+    position: fixed;
+    bottom: 0;
+    left: 30%; /* chat-box의 왼쪽 위치에 맞춤 */
+    width: 70%; /* chat-box와 같은 너비 */
+    padding: 10px;
+    background-color: white;
+    border-top: 1px solid #ddd;
+    box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+}
+
+.input-group-prepend .btn {
+    border-radius: 50%;
+    padding: 0;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#chatInput {
+    border-radius: 20px;
+    padding: 10px 15px;
+    font-size: 16px;
+    margin-left: 10px;
+}
+
+.input-group-append .btn-primary {
+    border-radius: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #007bff;
+    border: none;
+    margin-left: 10px;
 }

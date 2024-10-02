@@ -5,45 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <title>Chat</title>
-    <style>
-        .chat-container {
-            display: flex;
-            height: 100vh;
-        }
-
-        .user-list {
-            width: 30%;
-            border-right: 1px solid #ccc;
-            overflow-y: auto;
-        }
-
-        .chat-box {
-            width: 70%;
-            padding: 15px;
-            overflow-y: auto;
-        }
-
-        .user-item {
-            padding: 10px;
-            cursor: pointer;
-        }
-
-        .user-item:hover {
-            background-color: #f0f0f0;
-        }
-
-        .message {
-            margin-bottom: 10px;
-        }
-
-        .message.user {
-            text-align: right;
-        }
-
-        .message.other {
-            text-align: left;
-        }
-    </style>
+    <link th:href="@{/css/styles.css}" rel="stylesheet"/>
 </head>
 <body>
 <!-- Navigation-->
@@ -53,22 +15,46 @@
     <div class="chat-container">
         <!-- 왼쪽: 대화 상대 리스트 -->
         <div class="user-list">
-            <h5>대화 상대</h5>
-            <div class="user-item" onclick="selectUser('User 1')">User 1</div>
-            <div class="user-item" onclick="selectUser('User 2')">User 2</div>
-            <div class="user-item" onclick="selectUser('User 3')">User 3</div>
-            <!-- 추가적인 유저 항목들 -->
+            <h5 class="p-3">대화 상대</h5>
+            <div class="user-item" onclick="selectUser('User 1')">
+                <img src="/images/profile/userDefaultImg.png" alt="User 1" class="profile-image">
+                User 1
+            </div>
+            <div class="user-item" onclick="selectUser('User 2')">
+                <img src="/images/profile/userDefaultImg.png" alt="User 1" class="profile-image">
+                User 2
+            </div>
+            <div class="user-item" onclick="selectUser('User 3')">
+                <img src="/images/profile/userDefaultImg.png" alt="User 1" class="profile-image">
+                User 3
+            </div>
         </div>
         <!-- 오른쪽: 현재 대화 중인 상대와의 채팅 기록 -->
         <div class="chat-box">
             <h5 id="current-user">User 1과의 대화</h5>
             <div class="messages">
-                <div class="message user">안녕하세요!</div>
-                <div class="message other">안녕하세요! 어떻게 도와드릴까요?</div>
-                <div class="message user">제품에 대해 문의하고 싶어요.</div>
-                <!-- 추가적인 메시지들 -->
+                <div class="message-container other">
+                    <div class="message other">안녕하세요!</div>
+                    <div class="message-time">오전 10:00</div>
+                </div>
+                <div class="message-container user">
+                    <div class="message user">안녕하세요! 어떻게 도와드릴까요?</div>
+                    <div class="message-time">오전 10:01</div>
+                </div>
+                <div class="message-container other">
+                    <div class="message other">제품에 대해 문의하고 싶어요.</div>
+                    <div class="message-time">오전 10:02</div>
+                </div>
             </div>
+
+            <!-- Fixed input box inside chat-box -->
             <div class="input-group mt-3">
+                <div class="input-group-prepend">
+                    <button class="btn btn-outline-secondary" type="button" id="attachButton">
+                        📎
+                    </button>
+                </div>
+                <input type="file" id="fileInput" style="display: none;">
                 <input type="text" class="form-control" placeholder="메시지를 입력하세요..." id="chatInput">
                 <div class="input-group-append">
                     <button class="btn btn-primary" onclick="sendMessage()">전송</button>
@@ -88,16 +74,42 @@
 
     function sendMessage() {
         const message = document.getElementById('chatInput').value;
+        const time = new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
+
         if (message) {
             const messagesContainer = document.querySelector('.messages');
+            const newMessageContainer = document.createElement('div');
+            newMessageContainer.className = 'message-container user';
+
             const newMessage = document.createElement('div');
             newMessage.className = 'message user';
             newMessage.innerText = message;
-            messagesContainer.appendChild(newMessage);
+
+            const messageTime = document.createElement('div');
+            messageTime.className = 'message-time';
+            messageTime.innerText = time;
+
+            newMessageContainer.appendChild(newMessage);
+            newMessageContainer.appendChild(messageTime);
+            messagesContainer.appendChild(newMessageContainer);
+
             document.getElementById('chatInput').value = ''; // 입력창 비우기
+            messagesContainer.scrollTop = messagesContainer.scrollHeight; // 스크롤을 아래로 자동 이동
             // 여기에 메시지를 서버로 전송하는 로직 추가
         }
     }
+
+    // Enter 키 입력 시 메시지 전송
+    document.getElementById('chatInput').addEventListener('keydown', function(event) {
+        if (event.key === 'Enter') {
+            sendMessage();
+        }
+    });
+
+    // 첨부파일 버튼 클릭 시 파일 첨부창 열기
+    document.getElementById('attachButton').addEventListener('click', function() {
+        document.getElementById('fileInput').click();
+    });
 </script>
 </body>
 </html>

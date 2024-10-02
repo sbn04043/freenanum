@@ -22,6 +22,4 @@ public class ChatController {
     public String chatHome() {
         return "/chat/index";
     }
-
-
 }

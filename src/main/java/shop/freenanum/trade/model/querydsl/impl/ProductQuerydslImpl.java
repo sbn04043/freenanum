@@ -21,6 +21,24 @@ public class ProductQuerydslImpl implements ProductQuerydsl {
     private QProductImgEntity qProductImgEntity = QProductImgEntity.productImgEntity;
 
     @Override
+    public Long searchCount(String locationInput, String productInput) {
+        BooleanBuilder builder = new BooleanBuilder();
+
+        if (locationInput != null && !locationInput.isEmpty()) {
+            builder.and(qProductEntity.productAddress.contains(locationInput));
+        }
+
+        if (productInput != null && !productInput.isEmpty()) {
+            builder.and(qProductEntity.productTitle.contains(productInput));
+        }
+
+        return jpaQueryFactory
+                .select(qProductEntity.count())
+                .where(builder)
+                .fetchOne();
+    }
+
+    @Override
     public ProductModel getProductWithImgUrl(Long id) {
         return jpaQueryFactory
                 .select(Projections.constructor(
@@ -111,7 +129,7 @@ public class ProductQuerydslImpl implements ProductQuerydsl {
     }
 
     @Override
-    public List<ProductEntity> search(int pageNo, String locationInput, String productInput) {
+    public List<ProductEntity> search(Long pageNo, String locationInput, String productInput) {
         BooleanBuilder builder = new BooleanBuilder();
 
         if (locationInput != null && !locationInput.isEmpty()) {
@@ -125,6 +143,9 @@ public class ProductQuerydslImpl implements ProductQuerydsl {
         return jpaQueryFactory
                 .selectFrom(qProductEntity)
                 .where(builder)
+                .offset((pageNo - 1) * 20L)
+                .limit(20L)
+                .orderBy(qProductEntity.id.desc())
                 .fetch();
     }
 }

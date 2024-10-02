@@ -44,8 +44,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public UserEntity save(ProductEntity productEntity) {
-        return null;
+    public ProductEntity save(ProductEntity productEntity) {
+        return productRepository.save(productEntity);
     }
 
     @Override

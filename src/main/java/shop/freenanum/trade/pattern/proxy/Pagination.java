@@ -9,13 +9,13 @@ import org.springframework.stereotype.Component;
 @Lazy
 public class Pagination {
 
-    private int totalCount, startRow, endRow; // row
-    private int pageCount, pageSize, startPage, endPage; // page
-    private int blockCount, prevBlock, nextBlock; // block
+    private Long totalCount, startRow, endRow; // row
+    private Long pageCount, pageSize, startPage, endPage; // page
+    private Long blockCount, prevBlock, nextBlock; // block
     private boolean existPrev, existNext;
 
     //받아올 값
-    private int rowNum, pageNum, blockNum;
+    private Long rowNum, pageNum, blockNum;
 
 
     //search 조건 추가해야하지만 일단 X
@@ -25,31 +25,31 @@ public class Pagination {
     public Pagination() {
     }
 
-    public Pagination(int pageNum, int totalCount) {
+    public Pagination(Long pageNum, Long totalCount) {
         this.pageNum = pageNum;
         this.totalCount = totalCount;
 
         this.pageCount = this.totalCount % PAGE_SIZE == 0 ? this.totalCount / PAGE_SIZE : this.totalCount / PAGE_SIZE + 1;
-        this.startRow = (pageNum - 1) * PAGE_SIZE;
+        this.startRow = (this.pageNum - 1) * PAGE_SIZE;
         this.endRow = pageNum * PAGE_SIZE;
 
-        if (pageCount < 5) {
-            this.startPage = 1;
+        if (pageCount < 5L) {
+            this.startPage = 1L;
             this.endPage = pageCount;
-        } else if (pageNum < 3) {
-            this.startPage = 1;
-            this.endPage = 5;
-        } else if (pageNum > pageCount - 2) {
-            this.startPage = pageCount - 4;
+        } else if (pageNum < 3L) {
+            this.startPage = 1L;
+            this.endPage = 5L;
+        } else if (pageNum > pageCount - 2L) {
+            this.startPage = pageCount - 4L;
             this.endPage = pageCount;
         } else {
-            this.startPage = pageNum - 2;
-            this.endPage = pageNum + 2;
+            this.startPage = pageNum - 2L;
+            this.endPage = pageNum + 2L;
         }
 
-        this.existPrev = pageNum == 1;
-        this.existNext = pageNum == pageCount;
-        this.nextBlock = startPage + BLOCK_SIZE;
-        this.prevBlock = startPage - BLOCK_SIZE;
+        this.existPrev = pageNum != 1L;
+        this.existNext = !pageNum.equals(pageCount);
+        this.nextBlock = Math.min(pageNum + BLOCK_SIZE, endPage);
+        this.prevBlock = Math.max(pageNum - BLOCK_SIZE, startPage);
     }
 }

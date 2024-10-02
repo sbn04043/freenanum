@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface ProductService {
     List<ProductEntity> findAll();
 
-    UserEntity save(ProductEntity productEntity);
+    ProductEntity save(ProductEntity productEntity);
 
     Optional<ProductEntity> findById(Long id);
 

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+
+<!-- 모달 버튼 Fragment -->
+<div th:fragment="loginModalButton">
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#loginModal">
+        로그인
+    </button>
+</div>
+
+<!-- 모달 창 Fragment -->
+<div th:fragment="loginModal">
+    <style>
+        .login-container {
+            max-width: 400px;
+            margin: 0 auto;
+            justify-content: center;
+        }
+
+        .btn-block {
+            width: 100%; /* 버튼을 form-control과 같은 너비로 */
+        }
+
+        .button-row {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .button-row .btn {
+            width: 100%; /* 두 버튼이 같은 크기로 */
+            margin-bottom: 10px;
+        }
+
+        .register-button {
+            margin-top: 10px;
+        }
+    </style>
+
+    <!-- 로그인 모달 -->
+    <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginModalLabel">Login</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- 로그인 폼 시작 -->
+                    <div class="login-container">
+                        <form action="@{/api/auth/login}" method="post">
+                            <div class="form-group">
+                                <label for="username">Username</label>
+                                <input type="text" class="form-control" id="username" name="username" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="password">Password</label>
+                                <input type="password" class="form-control" id="password" name="password" required>
+                            </div>
+                            <!-- 버튼을 세로로 가운데 정렬 -->
+                            <div class="button-row">
+                                <button type="submit" class="btn btn-primary btn-block">Login</button>
+                                <a href="/auth/naver" class="btn btn-success btn-block">네이버로 로그인</a>
+                            </div>
+                        </form>
+
+                        <!-- 회원가입 버튼 추가 -->
+                        <div class="register-button text-center mt-3">
+                            <a href="/register" class="btn btn-outline-secondary btn-block">회원가입</a>
+                        </div>
+                    </div>
+                    <!-- 로그인 폼 끝 -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

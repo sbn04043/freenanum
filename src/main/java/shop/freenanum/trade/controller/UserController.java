@@ -23,6 +23,13 @@ public class UserController {
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
 
+
+
+    @GetMapping("/signup")
+    public String signup(Model model) {
+        return "/users/signup";
+    }
+
     @PostMapping("/register")
     public String register(@RequestBody UserModel userModel, Model model) {
         userModel.setPassword(passwordEncoder.encode(userModel.getPassword()));

@@ -17,15 +17,14 @@
 
         .image-card {
             position: relative;
-            width: 450px;
-            height: 600px;
             text-align: center;
+            overflow: hidden; /* 이미지가 카드 영역을 넘어가지 않도록 설정 */
         }
 
         img {
-            width: 100%;
-            height: auto;
-            object-fit: cover;
+            width: 450px;
+            height: auto; /* 이미지가 카드의 전체 높이를 차지하도록 설정 */
+            object-fit: cover; /* 비율을 유지하면서 이미지 채우기 */
         }
 
         .slider-button {
