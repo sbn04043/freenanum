@@ -21,14 +21,14 @@ public class UserEntity {
 
     @NotNull
     @Length(max = 40)
-    private String email;
+    private String username;
 
     @NotNull
     private String password;
 
     @NotNull
     @Length(max = 40)
-    private String username;
+    private String name;
 
     @NotNull
     private String nickname;
@@ -52,9 +52,10 @@ public class UserEntity {
 
     public static UserEntity toRegisterEntity(UserModel userModel) {
         return UserEntity.builder()
-                .email(userModel.getEmail())
-                .password(userModel.getPassword())
                 .username(userModel.getUsername())
+                .password(userModel.getPassword())
+                .name(userModel.getName())
+                .nickname(userModel.getNickname())
                 .phone(userModel.getPhone())
                 .sellCount(0L)
                 .buyCount(0L)

@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserQuerydsl {
+    UserEntity findByUsername(String username);
+
     List<UserEntity> getList();
 
     UserEntity getById(Long id);
@@ -17,5 +19,4 @@ public interface UserQuerydsl {
 
     Optional<UserEntity> getByAddress(ProductEntity product);
 
-    UserEntity findByEmail(String email);
 }

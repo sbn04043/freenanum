@@ -15,6 +15,10 @@ spring:
       idle-timeout: 600000
       max-lifetime: 1000000
       pool-name: HikariCP
+  data:
+    redis:
+      host: 211.188.50.38
+      port: 6379
   thymeleaf:
     cache: false
     prefix: classpath:/templates/

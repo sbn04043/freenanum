@@ -41,9 +41,53 @@
                     </div>
                 </a>
             </div>
+
+            <nav aria-label="...">
+                <ul class="pagination">
+                    <!-- First Page -->
+                    <li class="page-item" th:classappend="${pagination.pageNum == 1} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{'/api/search/products/' + 1(locationInput=${location}, productInput=${product})}"
+                           th:text="${'<<'}"></a>
+                    </li>
+
+                    <!-- Previous Page -->
+                    <li class="page-item" th:classappend="${pagination.pageNum == 1} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{'/api/search/products/' + ${pagination.pageNum - 1}(locationInput=${location}, productInput=${product})}"
+                           th:text="${'<'}"></a>
+                    </li>
+
+                    <!-- Page Numbers -->
+                    <li class="page-item"
+                        th:each="i : ${#numbers.sequence(pagination.startPage, pagination.endPage)}"
+                        th:classappend="${i == pagination.pageNum} ? 'active'">
+                        <a class="page-link"
+                           th:href="@{'/api/search/products/' + ${i}(locationInput=${location}, productInput=${product})}"
+                           th:text="${i}">
+                        </a>
+                    </li>
+
+                    <!-- Next Page -->
+                    <li class="page-item" th:classappend="${pagination.pageNum == pagination.endPage} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{'/api/search/products/' + ${pagination.pageNum + 1}(locationInput=${location}, productInput=${product})}"
+                           th:text="${'>'}"></a>
+                    </li>
+
+                    <!-- Last Page -->
+                    <li class="page-item" th:classappend="${pagination.pageNum == pagination.endPage} ? 'disabled'">
+                        <a class="page-link"
+                           th:href="@{'/api/search/products/' +
+                           ${pagination.endPage}(locationInput=${location}, productInput=${product})}"
+                           th:text="${'>>'}"></a>
+                    </li>
+                </ul>
+            </nav>
         </div>
     </div>
-    <div th:text="${pagination}"></div>
 </section>
+<div th:replace="~{/fragment/footer :: footer}"></div>
+
 </body>
 </html>

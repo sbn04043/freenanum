@@ -23,8 +23,6 @@ public class UserController {
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
 
-
-
     @GetMapping("/signup")
     public String signup(Model model) {
         return "/users/signup";
@@ -32,18 +30,19 @@ public class UserController {
 
     @PostMapping("/register")
     public String register(@RequestBody UserModel userModel, Model model) {
+        System.out.println("userModel: " + userModel);
         userModel.setPassword(passwordEncoder.encode(userModel.getPassword()));
         userRepository.save(UserEntity.toRegisterEntity(userModel));
-        return "redirect:/api/users/login";
+        return "redirect:/api/products/list";
     }
 
     @GetMapping("/list")
     public String list(Model model) {
         model.addAttribute("users", userRepository.getList().stream().map(userEntity -> UserModel.builder()
                 .id(userEntity.getId())
-                .email(userEntity.getEmail())
-                .password(userEntity.getPassword())
                 .username(userEntity.getUsername())
+                .password(userEntity.getPassword())
+                .name(userEntity.getName())
                 .nickname(userEntity.getNickname())
                 .phone(userEntity.getPhone())
                 .sellCount(userEntity.getSellCount())
@@ -53,10 +52,5 @@ public class UserController {
                 .build()).toList());
 
         return "users/list";
-    }
-
-    @GetMapping("/login")
-    public String login() {
-        return "users/login";
     }
 }

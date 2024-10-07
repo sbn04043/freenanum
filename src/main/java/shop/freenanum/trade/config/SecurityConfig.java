@@ -20,8 +20,9 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable) // CSRF 비활성화
                 .authorizeHttpRequests(auth -> auth
-                                .requestMatchers("/api/users/login").permitAll() // 로그인 엔드포인트 허용
+                                .requestMatchers("/api/rest/users/auth").permitAll() // 로그인 엔드포인트 허용
                                 .requestMatchers("/images/**").permitAll()
+                                .requestMatchers("/**").permitAll()
                                 .anyRequest().permitAll()
 
                         //.anyRequest().authenticated() // 다른 모든 요청은 인증 필요

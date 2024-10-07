@@ -12,6 +12,7 @@ import shop.freenanum.trade.model.entity.QUserEntity;
 import shop.freenanum.trade.model.querydsl.ProductQuerydsl;
 
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 public class ProductQuerydslImpl implements ProductQuerydsl {
@@ -32,10 +33,13 @@ public class ProductQuerydslImpl implements ProductQuerydsl {
             builder.and(qProductEntity.productTitle.contains(productInput));
         }
 
-        return jpaQueryFactory
-                .select(qProductEntity.count())
-                .where(builder)
-                .fetchOne();
+        return Optional.ofNullable(
+                jpaQueryFactory
+                        .select(qProductEntity.count())
+                        .from(qProductEntity)
+                        .where(builder)
+                        .fetchOne()
+        ).orElse(0L);
     }
 
     @Override

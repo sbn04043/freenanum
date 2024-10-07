@@ -19,19 +19,19 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public String login(String email, String password) {
+    public String login(String username, String password) {
         // 실제 사용자 인증 로직을 구현 (예: DB 조회)
         // 예시: 기본 사용자 "test"와 비밀번호 "password" 사용
-        UserEntity userEntity = userRepository.findByEmail(email);
+        UserEntity userEntity = userRepository.findByUsername(username);
         if (userEntity != null && passwordEncoder.matches(password, userEntity.getPassword())) {
-            return email;
+            return username;
         }
         throw new RuntimeException("Invalid");
     }
 
     @Override
-    public UserModel findByEmail(String email) {
-        return UserModel.toModel(userRepository.findByEmail(email));
+    public UserModel findByEmail(String username) {
+        return UserModel.toModel(userRepository.findByUsername(username));
     }
 
     @Override

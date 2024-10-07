@@ -58,9 +58,9 @@ public class TestController {
         for (JsonNode user : resultNode) {
 
             userRepository.save(UserEntity.builder()
-                    .email(user.get("email").asText())
+                    .username(user.get("email").asText())
                     .password(passwordEncoder.encode(user.get("login").get("password").asText()))
-                    .username(user.path("name").path("first").asText() + " " + user.path("name").path("last").asText())
+                    .name(user.path("name").path("first").asText() + " " + user.path("name").path("last").asText())
                     .nickname(user.path("login").get("username").asText())
                     .phone(user.path("phone").asText())
                     .sellCount(0L)

@@ -16,11 +16,11 @@ import shop.freenanum.trade.model.entity.UserEntity;
 public class UserModel {
     private Long id;
 
-    private String email;
+    private String username;
 
     private String password;
 
-    private String username;
+    private String name;
 
     private String nickname;
 
@@ -42,9 +42,9 @@ public class UserModel {
     public static UserModel toModel(UserEntity userEntity) {
         return UserModel.builder()
                 .id(userEntity.getId())
-                .email(userEntity.getEmail())
-                .password(userEntity.getPassword())
                 .username(userEntity.getUsername())
+                .password(userEntity.getPassword())
+                .name(userEntity.getName())
                 .nickname(userEntity.getNickname())
                 .phone(userEntity.getPhone())
                 .url(userEntity.getUrl())
