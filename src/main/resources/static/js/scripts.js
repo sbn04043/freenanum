@@ -15,7 +15,9 @@ const getLocationList = () => {
         return;
     }
 
-    axios.get(`/api/location/search`, {
+    axios({
+        method: 'GET',
+        url: `/api/location/search`,
         params: {locationName}
     })
         .then(response => {
@@ -39,14 +41,16 @@ const getLocationList = () => {
         .catch(error => {
             console.error('Error fetching location:', error);
         });
+
+    // 선택된 위치를 입력 필드에 추가
+    const selectLocation = (locationName) => {
+        console.log(locationName);
+        document.getElementById('locationInput').value = locationName;
+        document.getElementById('locationResult').style.display = 'none'; // 결과 숨김
+    };
 };
 
-// 선택된 위치를 입력 필드에 추가
-const selectLocation = (locationName) => {
-    console.log(locationName);
-    document.getElementById('locationInput').value = locationName;
-    document.getElementById('locationResult').style.display = 'none'; // 결과 숨김
-};
+
 
 document.addEventListener("DOMContentLoaded", () => {
     // "로그인" 버튼 클릭 이벤트
@@ -61,13 +65,13 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        // 서버에 로그인 요청 보내기 (AJAX 방식으로 요청)
-        axios.post('/api/users/auth', {
-            username: username,
-            password: password
-        }, {
-            headers: {
-                'Content-Type': 'application/json'
+        axios({
+            method: 'POST',
+            url: '/api/users/auth',
+            headers: {'Content-Type': 'application/json'},
+            data: {
+                username: username,
+                password: password
             }
         })
             .then(response => {
