@@ -1,16 +1,17 @@
 package shop.freenanum.trade.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
 import shop.freenanum.trade.model.detail.MyUserDetails;
 import shop.freenanum.trade.model.entity.UserEntity;
 import shop.freenanum.trade.model.repository.UserRepository;
 
+@Service
 @RequiredArgsConstructor
-public class MyUserDetailsServiceImpl implements UserDetailsService {
+public class CustomUserDetailsServiceImpl implements UserDetailsService {
     private final UserRepository userRepository;
 
     @Override

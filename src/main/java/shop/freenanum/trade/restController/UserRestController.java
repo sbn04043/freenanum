@@ -24,22 +24,18 @@ public class UserRestController {
 
     @PostMapping("/auth")
     public ResponseEntity<String> login(@RequestBody Map<String, String> map) {
-        System.out.println("진입0" + map);
-
-        String username = map.get("username");
-        String password = map.get("password");
-//        System.out.println("진입1" + username + password);
+        System.out.println(map);
         try {
             // 인증 객체 생성
-//            Authentication authentication = authenticationManager.authenticate(
-//                    new UsernamePasswordAuthenticationToken(username, password));
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(map.get("username"), map.get("password")));
 
             // 인증이 성공하면 JWT 생성
-//            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-//            String jwtToken = jwtUtil.generateToken(userDetails.getUsername());
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            String jwtToken = jwtUtil.generateToken(userDetails.getUsername());
 
             // 성공 응답 반환
-            return ResponseEntity.ok("성공");
+            return ResponseEntity.ok(jwtToken);
 
         } catch (BadCredentialsException e) {
             // 잘못된 자격 증명 처리

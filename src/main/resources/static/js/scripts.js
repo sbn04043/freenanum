@@ -51,13 +51,14 @@ const getLocationList = () => {
 };
 
 
-
 document.addEventListener("DOMContentLoaded", () => {
     // "로그인" 버튼 클릭 이벤트
     document.getElementById('btn-login').addEventListener('click', () => {
         // 폼 데이터 수집
         const username = document.getElementById('username').value;
         const password = document.getElementById('password').value;
+
+        console.log(username, password);
 
         // 폼 데이터 유효성 검사
         if (username === '' || password === '') {
@@ -78,6 +79,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 // 로그인 성공 처리
                 if (response.status === 200) {
                     alert('로그인 성공!');
+                    const authToken = response.data.authToken;
+                    localStorage.setItem('authToken', authToken)
+                    console.log(authToken);
                     // 페이지 새로고침 또는 원하는 페이지로 이동
                     window.location.href = '/';
                 }
@@ -87,6 +91,23 @@ document.addEventListener("DOMContentLoaded", () => {
                 console.error('로그인 실패:', error);
                 alert('로그인 실패. 다시 시도해주세요.');
             });
+
+        const token = localStorage.getItem('authToken'); // 저장된 토큰 가져오기
+        axios({
+            method: 'GET', // 또는 다른 HTTP 메서드
+            url: '/api/your-protected-endpoint',
+            headers: {
+                'Authorization': `Bearer ${token}`, // Authorization 헤더 추가
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => {
+                console.log('성공: ' + response);
+            })
+            .catch(error => {
+                // 에러 처리
+                console.log('실패: ' + error);
+            });
     });
 
     // 모달 닫기 버튼 클릭 이벤트
@@ -95,3 +116,16 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById('loginForm').reset();
     });
 });
+
+axios.interceptors.request.use(
+    (config) => {
+        const token = localStorage.getItem('authToken');
+        if (token) {
+            config.headers['Authorization'] = `Bearer ${token}`;  // 헤더에 JWT 추가
+        }
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
