@@ -1,10 +1,14 @@
 package shop.freenanum.trade.model.domain;
 
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.FetchType;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.stereotype.Component;
 import shop.freenanum.trade.model.entity.UserEntity;
+
+import java.util.List;
 
 @Component
 @Getter
@@ -39,6 +43,8 @@ public class UserModel {
 
     private String gender;
 
+    private List<String> roles;
+
     public static UserModel toModel(UserEntity userEntity) {
         return UserModel.builder()
                 .id(userEntity.getId())
@@ -53,6 +59,7 @@ public class UserModel {
                 .score(userEntity.getScore())
                 .userAddress(userEntity.getUserAddress())
                 .gender(userEntity.getGender())
+                .roles(userEntity.getRoles())
                 .build();
     }
 }

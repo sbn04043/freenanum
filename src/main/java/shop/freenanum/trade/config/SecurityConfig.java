@@ -1,89 +1,90 @@
-//package shop.freenanum.trade.config;
-//
-//import lombok.RequiredArgsConstructor;
-//import org.springframework.context.annotation.Bean;
-//import org.springframework.context.annotation.Configuration;
-//import org.springframework.security.authentication.AuthenticationManager;
-//import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-//import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-//import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-//import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-//import org.springframework.security.config.http.SessionCreationPolicy;
-//import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
-//import org.springframework.security.config.web.server.ServerHttpSecurity;
-//import org.springframework.security.core.userdetails.User;
-//import org.springframework.security.core.userdetails.UserDetailsService;
-//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-//import org.springframework.security.crypto.password.PasswordEncoder;
-//import org.springframework.security.provisioning.InMemoryUserDetailsManager;
-//import org.springframework.security.web.SecurityFilterChain;
-//import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-//import org.springframework.security.web.server.SecurityWebFilterChain;
-//import org.springframework.web.cors.CorsConfiguration;
-//import shop.freenanum.trade.filter.JwtRequestFilter;
-//import shop.freenanum.trade.model.domain.UserModel;
-//import shop.freenanum.trade.util.JwtUtil;
-//
-//import java.util.Arrays;
-//import java.util.Collections;
-//
-//@Configuration
-//@EnableWebSecurity
-//@RequiredArgsConstructor
-//public class SecurityConfig {
-//
-//    private final JwtUtil jwtUtil;
-//    private final UserDetailsService userDetailsService;
-//
-//    @Bean
-//    public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) throws Exception {
-//        http
-//                // CORS 설정
-//                .cors(corsCustomizer -> corsCustomizer
-//                        .configurationSource(request -> {
-//                            CorsConfiguration configuration = new CorsConfiguration();
-//                            configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
-//                            configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-//                            configuration.setAllowCredentials(true);
-//                            configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "nickname"));
-//                            configuration.setMaxAge(3600L); // 1 hour
-//                            configuration.setExposedHeaders(Arrays.asList("Set-Cookie", "Authorization"));
-//                            return configuration;
-//                        }))
-//                // 기본 보안 설정 비활성화
-//                .csrf(ServerHttpSecurity.CsrfSpec::disable)
-//                .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
-//                .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
-//
-//                // JWT 필터 추가
-//                .addFilterBefore((exchange, chain) -> {
-//                    String jwtToken = resolveToken(exchange);
-//
-//                    if (jwtToken != null && !jwtUtil.isExpired(jwtToken)) {
-//                        String nickname = jwtUtil.getNickNameFromToken(jwtToken);
-//                        UsernamePasswordAuthenticationToken authentication =
-//                                new UsernamePasswordAuthenticationToken(nickname, null, null);
-//
-//                        // ReactiveSecurityContextHolder에 인증 정보 설정
-//                        return chain.filter(exchange)
-//                                .contextWrite(ReactiveSecurityContextHolder.withAuthentication(authentication))
-//                                .then(Mono.defer(() -> exchange.getResponse().setComplete()))
-//                                .doOnSuccess(unused -> {
-//                                    log.info("User '{}' has been authenticated and JWT tokens returned", nickname);
-//                                })
-//                                .doOnError(error -> {
-//                                    log.error("Failed to authenticate user '{}': {}", nickname, error.getMessage());
-//                                });
-//                    }
-//
-//                    // JWT 토큰이 없거나 유효하지 않은 경우 필터 체인 계속 진행
-//                    return chain.filter(exchange);
-//                }, SecurityWebFiltersOrder.AUTHENTICATION)
-//
-//
-//                // 로그인 필터 추가
-//                .addFilterAt(new LoginFilter(customReactiveAuthenticationManager, successHandler, failureHandler), SecurityWebFiltersOrder.AUTHENTICATION)
-//
+package shop.freenanum.trade.config;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
+import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.core.context.ReactiveSecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.server.SecurityWebFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.cors.reactive.CorsConfigurationSource;
+import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Mono;
+import shop.freenanum.trade.filter.JwtRequestFilter;
+import shop.freenanum.trade.handler.MyAuthenticationFailureHandler;
+import shop.freenanum.trade.handler.MyAuthenticationSuccessHandler;
+import shop.freenanum.trade.service.impl.MyUserDetailsServiceImpl;
+import shop.freenanum.trade.util.JwtUtil;
+
+import java.util.Arrays;
+import java.util.Collections;
+
+@Configuration
+@EnableWebSecurity
+@RequiredArgsConstructor
+public class SecurityConfig {
+    private final JwtUtil jwtUtil;
+    private final MyUserDetailsServiceImpl userDetailsService;
+    private final MyAuthenticationSuccessHandler myAuthenticationSuccessHandler;
+    private final MyAuthenticationFailureHandler myAuthenticationFailureHandler;
+
+    @Bean
+    public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) throws Exception {
+        http
+                // CORS 설정
+                .cors(corsCustomizer -> corsCustomizer
+                        .configurationSource(request -> {
+                            CorsConfiguration configuration = new CorsConfiguration();
+                            configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
+                            configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                            configuration.setAllowCredentials(true);
+                            configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "nickname"));
+                            configuration.setMaxAge(3600L); // 1 hour
+                            configuration.setExposedHeaders(Arrays.asList("Set-Cookie", "Authorization"));
+                            return configuration;
+                        }))
+                // 기본 보안 설정 비활성화
+                .csrf(ServerHttpSecurity.CsrfSpec::disable)
+                .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
+                .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
+
+                // JWT 필터 추가
+                .addFilterBefore((exchange, chain) -> {
+                    String jwtToken = resolveToken(exchange);
+
+                    if (jwtToken != null && !jwtUtil.isExpired(jwtToken)) {
+                        String nickname = jwtUtil.getUsernameFromToken(jwtToken);
+                        UsernamePasswordAuthenticationToken authentication =
+                                new UsernamePasswordAuthenticationToken(nickname, null, null);
+
+                        // ReactiveSecurityContextHolder에 인증 정보 설정
+                        return chain.filter(exchange)
+                                .contextWrite(ReactiveSecurityContextHolder.withAuthentication(authentication))
+                                .then(Mono.defer(() -> exchange.getResponse().setComplete()))
+                                .doOnSuccess(unused -> {
+                                    System.out.println(nickname + " User has been authenticated and JWT tokens returned");
+                                })
+                                .doOnError(Throwable::printStackTrace);
+                    }
+
+                    // JWT 토큰이 없거나 유효하지 않은 경우 필터 체인 계속 진행
+                    return chain.filter(exchange);
+                }, SecurityWebFiltersOrder.AUTHENTICATION)
+
+
+                // 로그인 필터 추가
+                .addFilterAt(new LoginFilter(customReactiveAuthenticationManager, successHandler, failureHandler), SecurityWebFiltersOrder.AUTHENTICATION)
+
 //                // 로그아웃 필터 추가
 //                .addFilterBefore(new LogoutFilter(jwtTokenService), SecurityWebFiltersOrder.AUTHENTICATION)
 //
@@ -93,71 +94,75 @@
 //                )
 //                //reissue 필터
 //                .addFilterBefore(new ReissueFilter(jwtUtil, jwtTokenService), SecurityWebFiltersOrder.AUTHORIZATION)
-//
-//
-//                // 권한 설정
-//                .authorizeExchange(auth -> auth
-//                        .pathMatchers("/login", "/oauth2/**", "/api/users", "/api/users/checkPassword", "/api/users/checkNickname", "/api/users/checkRole", "/api/users/updateDeclaration", "/api/users/updateLogoutUserTime").permitAll()  // /login과 /oauth2/** 경로는 인증 없이 접근 가능
-//                        .pathMatchers("/api/comments/{postId}").permitAll()
-//
-//                        .pathMatchers(HttpMethod.GET, "/api/files/*").permitAll()
-//                        .pathMatchers(HttpMethod.GET, "/api/files").permitAll()
-//
-//                        .pathMatchers("/api/groups/books").permitAll()
-//
-//                        .pathMatchers("/api/groups/groups").permitAll()
-//                        .pathMatchers("/api/groups/groups/able").hasAuthority(Role.ROLE_ADMIN.getCode())
-//                        .pathMatchers("/api/groups/groups/enable").hasAuthority(Role.ROLE_ADMIN.getCode())
-//                        .pathMatchers("/api/groups/groups/enable-list").hasAuthority(Role.ROLE_ADMIN.getCode())
-//                        .pathMatchers("/api/groups/groups/users/{groupId}").permitAll()
-//
-//                        .pathMatchers("/api/groups/posts/{groupId}").permitAll()
-//                        .pathMatchers(HttpMethod.PUT, "/api/groups/posts/{postId}").permitAll()
-//
-//                        .pathMatchers("/api/rooms/accounts/room/{roomId}").hasAuthority(Role.ROLE_SELLER.getCode())
-//
-//                        .pathMatchers(HttpMethod.POST, "/api/rooms/addresses").hasAuthority(Role.ROLE_SELLER.getCode())
-//                        .pathMatchers(HttpMethod.PUT, "/api/rooms/addresses").hasAuthority(Role.ROLE_SELLER.getCode())
-//                        .pathMatchers("/api/rooms/addresses/{id}").hasAuthority(Role.ROLE_SELLER.getCode())
-//                        .pathMatchers("/api/rooms/addresses/search").permitAll()
-//
-//                        .pathMatchers(HttpMethod.PUT, "/api/rooms/bookings/{id}").hasAuthority(Role.ROLE_SELLER.getCode())
-//                        .pathMatchers(HttpMethod.DELETE, "/api/rooms/bookings/{id}").hasAuthority(Role.ROLE_SELLER.getCode())
-//                        .pathMatchers("/api/rooms/bookings/room/{roomId}").hasAuthority(Role.ROLE_SELLER.getCode())
-//
-//                        .pathMatchers(HttpMethod.POST, "/api/rooms").hasAuthority(Role.ROLE_SELLER.getCode())
-//                        .pathMatchers(HttpMethod.PUT, "/api/rooms").hasAuthority(Role.ROLE_SELLER.getCode())
-//                        .pathMatchers("/api/rooms/{id}").hasAuthority(Role.ROLE_SELLER.getCode())
-//                        .pathMatchers("/api/rooms/user").hasAuthority(Role.ROLE_SELLER.getCode())
-//                        .pathMatchers("/api/rooms/confirm/{id}").hasAuthority(Role.ROLE_ADMIN.getCode())
-//                        .pathMatchers("/api/rooms/enabled").permitAll()
-//
-//                        .pathMatchers("/api/rooms/reviews/room/{roomId}").permitAll()
-//
-//                        .pathMatchers("/api/rooms/times/{roomId}").permitAll()
-//
-//                        .pathMatchers(HttpMethod.GET, "/api/users/aboard", "/api/users/aboard/viewCounts/{id}", "/api/users/aboard/details/{id}").permitAll()
-//                        .pathMatchers(HttpMethod.DELETE, "/api/users/aboard/{id}", "/api/users/depost/{id}").hasRole(Role.ROLE_ADMIN.getCode())  // ROLE_ADMIN만 가능
-//                        .pathMatchers(HttpMethod.PUT, "/api/users/aboard/{id}", "/api/users/updateRole").hasRole(Role.ROLE_ADMIN.getCode())
-//                        .pathMatchers(HttpMethod.POST, "/api/users/aboard").hasRole("ADMIN")
-//                        .pathMatchers(HttpMethod.GET, "/api/users/aboard/{nickname}", "/api/users/depost", "/api/users/findAllByNickname").hasRole(Role.ROLE_ADMIN.getCode())
-//                        .anyExchange().authenticated() // 그 외 모든 경로는 인증 필요
-//                );
+                // 권한 설정
+                .authorizeExchange(auth -> auth
+                        .pathMatchers("/api/users/login", "/oauth2/**").permitAll()  // /login과 /oauth2/** 경로는 인증 없이 접근 가능
+                        .pathMatchers("/api/products/list", "/api/products/{id}").permitAll()
+                        .pathMatchers("/static/**", "/css/**", "/js/**", "/images/**", "/assets/**").permitAll()
+                        .anyExchange().authenticated()
+                );
+        return http.build();
+    }
+
+    private String resolveToken(ServerWebExchange exchange) {
+        return exchange.getRequest().getHeaders().getFirst("Authorization");
+    }
+
+    @Bean
+    public JwtRequestFilter jwtRequestFilter() {
+        return new JwtRequestFilter(jwtUtil, userDetailsService);
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public AuthenticationManager authManager(HttpSecurity http) throws Exception {
+        AuthenticationManagerBuilder authenticationManagerBuilder =
+                http.getSharedObject(AuthenticationManagerBuilder.class);
+        // 사용자 인증 설정
+        authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+        return authenticationManagerBuilder.build();
+    }
+}
+
+//    @Bean
+//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//        http
+//                .securityContext(context -> context.requireExplicitSave(false))
+//                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+//                .csrf(AbstractHttpConfigurer::disable) // CSRF 비활성화
+//                .authorizeHttpRequests(authorize -> authorize
+//                        .requestMatchers("/api/users/login").permitAll() // 로그인 요청 허용
+//                        .requestMatchers("/api/products/list").permitAll()
+//                        .requestMatchers("/api/products/{id}").permitAll()
+//                        .requestMatchers("/static/**").permitAll() // 모든 정적 리소스 허용
+//                        .requestMatchers("/css/**").permitAll() // CSS 파일 허용
+//                        .requestMatchers("/js/**").permitAll() // JS 파일 허용
+//                        .requestMatchers("/images/**").permitAll() // 이미지 파일 허용
+//                        .requestMatchers("/assets/**").permitAll()
+//                        .anyRequest().authenticated() // 나머지 요청은 인증 필요
+//                )
+//                .formLogin(form -> form
+//                        .loginProcessingUrl("/api/users/login")
+//                        .successHandler(myAuthenticationSuccessHandler) // 로그인 성공 핸들러 설정
+//                        .failureHandler(myAuthenticationFailureHandler) // 로그인 실패 핸들러 설정 (필요시 추가)
+//                )
+//                .addFilterBefore(jwtRequestFilter(), UsernamePasswordAuthenticationFilter.class);
 //        return http.build();
 //    }
-//
+
 //    @Bean
-//    public PasswordEncoder passwordEncoder() {
-//        return new BCryptPasswordEncoder();
+//    public WebMvcConfigurer corsConfigurer() {
+//        return new WebMvcConfigurer() {
+//            @Override
+//            public void addCorsMappings(CorsRegistry registry) {
+//                registry.addMapping("/**")
+//                        .allowedOrigins("*") // 특정 출처로 변경 가능
+//                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+//                        .allowedHeaders("*");
+//            }
+//        };
 //    }
-//
-//    @Bean
-//    public AuthenticationManager authManager(HttpSecurity http) throws Exception {
-//        AuthenticationManagerBuilder authenticationManagerBuilder =
-//                http.getSharedObject(AuthenticationManagerBuilder.class);
-//        // 사용자 인증 설정
-//        authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
-//        return authenticationManagerBuilder.build();
-//    }
-//}
-//

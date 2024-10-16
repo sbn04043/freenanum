@@ -11,18 +11,19 @@ import shop.freenanum.trade.model.repository.UserRepository;
 
 @Service
 @RequiredArgsConstructor
-public class CustomUserDetailsServiceImpl implements UserDetailsService {
+public class MyUserDetailsServiceImpl implements UserDetailsService {
     private final UserRepository userRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         // 사용자 정보 조회
         UserEntity userEntity = userRepository.findByUsername(username);
+        System.out.println(userEntity);
         if (userEntity == null) {
             throw new UsernameNotFoundException("User not found");
         }
 
         // UserDetails 객체 생성
-        return new MyUserDetails(userEntity.getId(), userEntity.getUsername(), userEntity.getPassword());
+        return new MyUserDetails(userEntity);
     }
 }

@@ -4,7 +4,14 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import shop.freenanum.trade.model.domain.UserModel;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -47,8 +54,14 @@ public class UserEntity {
 
     private String userAddress;
 
+    @Getter
+    private boolean enabled;
+
     @Length(max = 20)
     private String gender;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<String> roles;
 
     public static UserEntity toRegisterEntity(UserModel userModel) {
         return UserEntity.builder()
@@ -62,6 +75,8 @@ public class UserEntity {
                 .score(0.0)
                 .userAddress(userModel.getUserAddress())
                 .gender(userModel.getGender())
+                .roles(Collections.singletonList("ROLE_USER"))
                 .build();
     }
+
 }

@@ -4,8 +4,11 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,47 +16,60 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.server.WebFilter;
+import shop.freenanum.trade.service.impl.MyUserDetailsServiceImpl;
 import shop.freenanum.trade.util.JwtUtil;
 
 import java.io.IOException;
 
-@Component
 @RequiredArgsConstructor
+@Component
 public class JwtRequestFilter extends OncePerRequestFilter {
+    private final JwtUtil jwtUtil;
+    private final UserDetailsService userDetailsService;
 
-    private final JwtUtil jwtUtil; // JWT 유틸리티 클래스
-
-    private final UserDetailsService userDetailsService; // 사용자 세부정보 서비스
+    public String resolveToken(ServerHttpRequest request) {
+        String bearerToken = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7); // "Bearer "를 제외한 토큰 반환
+        }
+        return null; // 토큰이 없으면 null 반환
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
         final String authorizationHeader = request.getHeader("Authorization");
 
+        if (request.getRequestURI().equals("/api/users/login")) {
+            // 로그인 요청은 JWT 검증을 건너뛴다
+            chain.doFilter(request, response);
+            return;
+        }
+
         String username = null;
         String jwt = null;
 
-        // Authorization 헤더에서 Bearer 토큰을 추출
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            jwt = authorizationHeader.substring(7); // "Bearer " 이후의 문자열
-            username = jwtUtil.extractUsername(jwt); // JWT에서 사용자 이름 추출
-        }
-
-        // 사용자 인증 처리
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-
-            // JWT 토큰의 유효성을 검사
-            if (jwtUtil.validateToken(jwt, userDetails)) {
-                // 인증 설정
-                UsernamePasswordAuthenticationToken authenticationToken =
-                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+            jwt = authorizationHeader.substring(7);
+            try {
+                username = jwtUtil.extractUsername(jwt);
+            } catch (Exception e) {
+                System.out.println("Error parsing JWT token: " + e.getMessage());
             }
         }
 
-        // 다음 필터로 요청 전달
+        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+            if (jwtUtil.validateToken(jwt, userDetails.getUsername())) {
+                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
+                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                usernamePasswordAuthenticationToken
+                        .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+            }
+        }
+
         chain.doFilter(request, response);
     }
 }

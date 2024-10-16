@@ -50,7 +50,7 @@ spring:
     time-zone: UTC
 jwt:
   secret: V/CjhO4NzYQDTxd91K+voBmi9BE7gRj2i65sNvKHOd8=
-
+  expiration: 3600000
 springdoc:
   swagger-ui:
     groups-order: DESC
