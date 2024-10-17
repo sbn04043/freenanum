@@ -1,54 +1,72 @@
 package shop.freenanum.trade.filter;
 
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
-import org.springframework.web.filter.OncePerRequestFilter;
-import shop.freenanum.trade.util.JwtUtil;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.server.authentication.AuthenticationWebFilter;
+import org.springframework.security.web.server.authentication.ServerAuthenticationFailureHandler;
+import org.springframework.security.web.server.authentication.ServerAuthenticationSuccessHandler;
+import org.springframework.web.server.ServerWebExchange;
+import org.springframework.web.server.WebFilterChain;
+import reactor.core.publisher.Mono;
 
-import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
-@RequiredArgsConstructor
-public class LoginFilter extends OncePerRequestFilter {
-    private final AuthenticationManager authenticationManager;
-    private final JwtUtil jwtUtil;
+public class LoginFilter extends AuthenticationWebFilter {
 
-    @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) {
-        // 로그인 요청 URL을 확인하여 필터를 적용할지 결정합니다.
-        return !request.getServletPath().equals("/api/users/login");
+    private final UserDetailsService userDetailsService;
+    private final ServerAuthenticationSuccessHandler successHandler;
+    private final ServerAuthenticationFailureHandler failureHandler;
+
+    public LoginFilter(AuthenticationManager authenticationManager,
+                       UserDetailsService userDetailsService,
+                       ServerAuthenticationSuccessHandler successHandler,
+                       ServerAuthenticationFailureHandler failureHandler) {
+        super(authenticationManager); // 상위 클래스 생성자 호출
+        this.userDetailsService = userDetailsService;
+        this.successHandler = successHandler;
+        this.failureHandler = failureHandler;
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String username = request.getParameter("username");
-        String password = request.getParameter("password");
+    public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
+        // 요청 본문에서 사용자 이름과 비밀번호 추출
+        return exchange.getRequest().getBody()
+                .flatMap(dataBuffer -> {
+                    String requestBody = dataBuffer.toString(StandardCharsets.UTF_8);
+                    String[] credentials = requestBody.split("&");
+                    String username = null;
+                    String password = null;
 
-        if (username != null && password != null) {
-            UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(username, password);
-            try {
-                Authentication authentication = authenticationManager.authenticate(authRequest);
-                // 인증에 성공한 경우 JWT를 생성하여 응답 헤더에 추가합니다.
-//                String jwtToken = jwtUtil.generateToken(authentication);
-//                response.setHeader("Authorization", "Bearer " + jwtToken);
-                // 인증 정보를 WebAuthenticationDetailsSource에 설정합니다.
-                authRequest.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-            } catch (AuthenticationException e) {
-                // 인증 실패 시 적절한 오류 처리를 할 수 있습니다.
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.getWriter().write("Authentication failed: " + e.getMessage());
-                return;
-            }
-        }
+                    for (String credential : credentials) {
+                        String[] keyValue = credential.split("=");
+                        if ("username".equals(keyValue[0])) {
+                            username = keyValue[1];
+                        } else if ("password".equals(keyValue[0])) {
+                            password = keyValue[1];
+                        }
+                    }
 
-        // 다음 필터로 진행합니다.
-        filterChain.doFilter(request, response);
+                    // 사용자 이름과 비밀번호를 사용하여 인증 토큰 생성
+                    UsernamePasswordAuthenticationToken authenticationToken =
+                            new UsernamePasswordAuthenticationToken(username, password);
+
+                    return this.getAuthenticationManager().authenticate(authenticationToken)
+                            .doOnNext(authentication -> {
+                                // 인증 성공 시 핸들러 호출
+                                successHandler.onAuthenticationSuccess(exchange, authentication);
+                            })
+                            .onErrorResume(AuthenticationException.class, e -> {
+                                // 인증 실패 시 핸들러 호출
+                                return failureHandler.onAuthenticationFailure(exchange, e);
+                            });
+                })
+                .flatMap(authentication -> {
+                    // 인증 정보가 성공적으로 처리되면 체인을 계속 진행
+                    return chain.filter(exchange);
+                })
+                .switchIfEmpty(chain.filter(exchange)); // 인증이 실패한 경우에도 체인을 계속 진행
     }
 }
