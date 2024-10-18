@@ -58,4 +58,13 @@ public class UserQuerydslImpl implements UserQuerydsl {
     public Optional<UserEntity> getByAddress(ProductEntity product) {
         return Optional.ofNullable(jpaQueryFactory.selectFrom(qUser).where(qUser.userAddress.eq(product.getProductAddress())).fetchFirst());
     }
+
+    @Override
+    public UserEntity findByUsernameAndPassword(String username, String password) {
+        return jpaQueryFactory
+                .selectFrom(qUser)
+                .where(qUser.username.eq(username)
+                        .and(qUser.password.eq(password)))
+                .fetchOne();
+    }
 }

@@ -43,7 +43,7 @@ public class UserModel {
 
     private String gender;
 
-    private List<String> roles;
+//    private List<String> roles;
 
     public static UserModel toModel(UserEntity userEntity) {
         return UserModel.builder()
@@ -59,7 +59,6 @@ public class UserModel {
                 .score(userEntity.getScore())
                 .userAddress(userEntity.getUserAddress())
                 .gender(userEntity.getGender())
-                .roles(userEntity.getRoles())
                 .build();
     }
 }

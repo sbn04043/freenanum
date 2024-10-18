@@ -1,8 +1,7 @@
-<!-- 로그인/로그아웃 버튼 Fragment -->
+<!-- 로그인 버튼 Fragment -->
 <div th:fragment="loginModalButton">
-    <button type="button" class="btn btn-primary"
-            th:text="${session.authToken == null ? '로그인' : '로그아웃'}"
-            th:data-action="${session.authToken == null ? 'showLoginModal' : 'logout'}">
+    <button type="button" class="btn btn-primary" id="loginBtn"
+            th:text="로그인">
     </button>
 </div>
 
@@ -61,7 +60,7 @@
                             </div>
                             <!-- 버튼을 세로로 가운데 정렬 -->
                             <div class="button-row">
-                                <input type="button" class="btn btn-primary btn-block" value="로그인" id="btn-login">
+                                <input type="button" class="btn btn-primary btn-block" value="로그인" id="loginHandler">
 
                                 <a href="/auth/naver" class="btn btn-success btn-block">네이버로 로그인</a>
                             </div>

@@ -19,4 +19,5 @@ public interface UserQuerydsl {
 
     Optional<UserEntity> getByAddress(ProductEntity product);
 
+    UserEntity findByUsernameAndPassword(String username, String password);
 }

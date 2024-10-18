@@ -15,7 +15,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.springframework.security.crypto.password.PasswordEncoder;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,7 +43,7 @@ public class TestController {
     private final ProductRepository productRepository;
     private final ProductImageServiceImpl productImageServiceImpl;
     private final ProductServiceImpl productServiceImpl;
-    private final PasswordEncoder passwordEncoder;
+//    private final PasswordEncoder passwordEncoder;
 
     @GetMapping("/userCrawling")
     public String userCrawling(Model model) throws IOException {
@@ -59,7 +59,7 @@ public class TestController {
 
             userRepository.save(UserEntity.builder()
                     .username(user.get("email").asText())
-                    .password(passwordEncoder.encode(user.get("login").get("password").asText()))
+                    .password((user.get("login").get("password").asText()))
                     .name(user.path("name").path("first").asText() + " " + user.path("name").path("last").asText())
                     .nickname(user.path("login").get("username").asText())
                     .phone(user.path("phone").asText())
