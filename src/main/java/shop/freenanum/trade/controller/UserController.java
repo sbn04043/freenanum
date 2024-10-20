@@ -8,7 +8,7 @@ import shop.freenanum.trade.model.domain.UserModel;
 import shop.freenanum.trade.model.entity.UserEntity;
 import shop.freenanum.trade.model.repository.UserRepository;
 import shop.freenanum.trade.service.UserService;
-import shop.freenanum.trade.util.JwtUtil;
+//import shop.freenanum.trade.util.JwtUtil;
 
 @Controller
 @RequestMapping("/api/users")
@@ -17,7 +17,7 @@ import shop.freenanum.trade.util.JwtUtil;
 public class UserController {
     private final UserRepository userRepository;
     private final UserService userService;
-    private final JwtUtil jwtUtil;
+//    private final JwtUtil jwtUtil;
 //    private final PasswordEncoder passwordEncoder;
 
     @GetMapping("/signup")

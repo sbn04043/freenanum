@@ -6,6 +6,7 @@ import io.lettuce.core.api.sync.RedisCommands;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
@@ -13,22 +14,19 @@ import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSeriali
 @Configuration
 public class RedisConfig {
     @Bean
-    public RedisConnectionFactory redisConnectionFactory() {
-        return new LettuceConnectionFactory();
+    public LettuceConnectionFactory redisConnectionFactory() {
+        RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration();
+        configuration.setHostName("211.188.50.38");
+        configuration.setPort(6379);
+        configuration.setPassword("1234"); // 비밀번호를 여기에 추가하세요
+
+        return new LettuceConnectionFactory(configuration);
     }
 
     @Bean
-    public RedisClient redisClient() {
-        return RedisClient.create("redis://localhost:6379");
-    }
-
-    @Bean
-    public StatefulRedisConnection<String, String> redisConnection(RedisClient redisClient) {
-        return redisClient.connect();
-    }
-
-    @Bean
-    public RedisCommands<String, String> redisCommands(StatefulRedisConnection<String, String> connection) {
-        return connection.sync();
+    public RedisTemplate<String, Object> redisTemplate() {
+        RedisTemplate<String, Object> template = new RedisTemplate<>();
+        template.setConnectionFactory(redisConnectionFactory());
+        return template;
     }
 }

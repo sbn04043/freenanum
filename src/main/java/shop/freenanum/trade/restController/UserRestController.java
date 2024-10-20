@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 import shop.freenanum.trade.model.domain.UserModel;
 import shop.freenanum.trade.model.entity.UserEntity;
 import shop.freenanum.trade.model.repository.UserRepository;
-import shop.freenanum.trade.util.JwtUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,7 +17,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:3000") // 허용할 출처
 public class UserRestController {
-    private final JwtUtil jwtUtil;
+//    private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
     private final HttpSession httpSession;
 //    private final PasswordEncoder passwordEncoder;

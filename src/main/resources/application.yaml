@@ -1,9 +1,8 @@
 spring:
-  web:
-    resources:
-      static-locations: classpath:/static/
   application:
     name: freenanum
+
+  # 데이터베이스 설정
   datasource:
     url: jdbc:mysql://211.188.50.38/freenanum
     username: root
@@ -15,21 +14,28 @@ spring:
       idle-timeout: 600000
       max-lifetime: 1000000
       pool-name: HikariCP
+
+  # Redis 설정
   data:
     redis:
       host: 211.188.50.38
       port: 6379
+      password: 1234
+    mongodb:
+      host: 211.188.50.38
+      port: 27017
+      username: root
+      password: 1234
+
+  # Thymeleaf 설정
   thymeleaf:
     cache: false
     prefix: classpath:/templates/
     suffix: .html
     enabled: true
     encoding: UTF-8
-  devtools:
-    livereload:
-      enabled: true
-    restart:
-      enabled: true
+
+  # JPA 설정
   jpa:
     hibernate:
       ddl-auto: update
@@ -43,14 +49,24 @@ spring:
         jdbc:
           batch_size: 100
     show-sql: true
-  sql:
-    init:
-      mode: always
+
+  # DevTools 설정
+  devtools:
+    livereload:
+      enabled: true
+    restart:
+      enabled: true
+
+  # Jackson 설정
   jackson:
     time-zone: UTC
+
+  # JWT 설정
 jwt:
   secret: V/CjhO4NzYQDTxd91K+voBmi9BE7gRj2i65sNvKHOd8=
-  expiration: 3600000
+  expiration: 3600000  # 만료 시간 (1시간)
+
+  # Swagger 설정
 springdoc:
   swagger-ui:
     groups-order: DESC
@@ -58,8 +74,8 @@ springdoc:
     operations-sorter: method
     disable-swagger-default-url: true
     display-request-duration: true
-    defaultModelsExpandDepth: 2
-    defaultModelExpandDepth: 2
+    default-models-expand-depth: 2
+    default-model-expand-depth: 2
   api-docs:
     path: /api-docs
   show-actuator: true
@@ -69,4 +85,3 @@ springdoc:
   model-and-view-allowed: true
   paths-to-match:
     - /**
-
