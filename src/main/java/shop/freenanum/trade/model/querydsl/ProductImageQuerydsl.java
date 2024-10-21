@@ -5,7 +5,7 @@ import shop.freenanum.trade.model.entity.ProductImgEntity;
 import java.util.List;
 
 public interface ProductImageQuerydsl {
-    List<ProductImgEntity> findByProductId(Long id);
+    List<ProductImgEntity> findByProductId(String id);
 
-    String getOneById(Long id);
+    String getOneById(String id);
 }

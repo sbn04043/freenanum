@@ -1,26 +1,25 @@
 package shop.freenanum.trade.model.entity;
 
-import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 import shop.freenanum.trade.model.domain.ProductModel;
 import shop.freenanum.trade.model.enumeration.ProductStatus;
 
-@Entity
+@Document(collection = "product")
 @Getter
 @Setter
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "product")
 public class ProductEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
-    private Long userId;
+    private String userId;
     @NotNull
     private String productTitle;
 
@@ -39,7 +38,7 @@ public class ProductEntity {
 
     public static ProductEntity toUploadEntity(ProductModel productModel) {
         return ProductEntity.builder()
-                .userId(1L) // 추후에 고치기
+                .userId("1") // 추후에 고치기
                 .productTitle(productModel.getProductTitle())
                 .productAddress(productModel.getProductAddress())
                 .productDescription(productModel.getProductDescription())

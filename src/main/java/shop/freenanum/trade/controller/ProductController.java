@@ -25,7 +25,7 @@ public class ProductController {
 
     @PostMapping("/upload")
     public String register(@RequestBody ProductModel productModel, Model model, MultipartFile multipartFile) {
-        Long productId = productService.save(ProductEntity.toUploadEntity(productModel)).getId();
+        String productId = productService.save(ProductEntity.toUploadEntity(productModel)).getId();
         productImageService.saveImage(productId, multipartFile);
 
         return "redirect:/api/products/" + productId;
@@ -37,7 +37,7 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public String showProduct(@PathVariable("id") Long id, Model model) {
+    public String showProduct(@PathVariable("id") String id, Model model) {
         System.out.println("product");
         model.addAttribute("product", productRepository.getProductWithNickname(id));
         System.out.println("productImg");

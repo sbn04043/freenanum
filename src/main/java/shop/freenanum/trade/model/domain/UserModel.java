@@ -1,7 +1,5 @@
 package shop.freenanum.trade.model.domain;
 
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.FetchType;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
@@ -18,7 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class UserModel {
-    private Long id;
+    private String id;
 
     private String username;
 

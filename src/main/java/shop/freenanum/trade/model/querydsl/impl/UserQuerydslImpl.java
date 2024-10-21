@@ -1,10 +1,10 @@
 package shop.freenanum.trade.model.querydsl.impl;
 
-import com.querydsl.core.BooleanBuilder;
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import shop.freenanum.trade.model.entity.ProductEntity;
-import shop.freenanum.trade.model.entity.QUserEntity;
 import shop.freenanum.trade.model.entity.UserEntity;
 import shop.freenanum.trade.model.querydsl.UserQuerydsl;
 
@@ -13,58 +13,61 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 public class UserQuerydslImpl implements UserQuerydsl {
-    private final JPAQueryFactory jpaQueryFactory;
-    private QUserEntity qUser = QUserEntity.userEntity;
+    private final MongoTemplate mongoTemplate;
 
     @Override
     public UserEntity findByUsername(String username) {
-        BooleanBuilder builder = new BooleanBuilder();
+        Query query = new Query();
 
-        // username이 null인지 확인
         if (username != null) {
-            builder.and(qUser.username.eq(username));
+            query.addCriteria(Criteria.where("username").is(username));
         } else {
-            // username이 null일 경우
-            builder.and(qUser.username.isNull());
+            query.addCriteria(Criteria.where("username").is(null));
         }
 
-        return jpaQueryFactory
-                .selectFrom(qUser)
-                .where(builder)
-                .fetchOne();
+        return mongoTemplate.findOne(query, UserEntity.class);
     }
 
     @Override
     public List<UserEntity> getList() {
-        return jpaQueryFactory.selectFrom(qUser).fetch();
+        return mongoTemplate.findAll(UserEntity.class);
     }
 
     @Override
-    public UserEntity getById(Long id) {
-        return jpaQueryFactory.selectFrom(qUser).where(qUser.id.eq(id)).fetchOne();
+    public UserEntity getById(String id) {
+        return mongoTemplate.findById(id, UserEntity.class);
     }
 
     @Override
-    public boolean existsUser(Long id) {
-        return !jpaQueryFactory.selectFrom(qUser).where(qUser.id.eq(id)).fetch().isEmpty();
+    public boolean existsUser(String id) {
+        return mongoTemplate.exists(new Query(Criteria.where("id").is(id)), UserEntity.class);
     }
 
     @Override
     public long getRowCount() {
-        return jpaQueryFactory.select(qUser.id.count()).from(qUser).fetchCount();
+        return mongoTemplate.count(new Query(), UserEntity.class);
     }
 
     @Override
     public Optional<UserEntity> getByAddress(ProductEntity product) {
-        return Optional.ofNullable(jpaQueryFactory.selectFrom(qUser).where(qUser.userAddress.eq(product.getProductAddress())).fetchFirst());
+        UserEntity userEntity = mongoTemplate.findOne(
+                new Query(Criteria.where("userAddress").is(product.getProductAddress())),
+                UserEntity.class
+        );
+        return Optional.ofNullable(userEntity);
     }
 
     @Override
     public UserEntity findByUsernameAndPassword(String username, String password) {
-        return jpaQueryFactory
-                .selectFrom(qUser)
-                .where(qUser.username.eq(username)
-                        .and(qUser.password.eq(password)))
-                .fetchOne();
+        Query query = new Query();
+        query.addCriteria(Criteria.where("username").is(username).and("password").is(password));
+        return mongoTemplate.findOne(query, UserEntity.class);
+    }
+
+    @Override
+    public Boolean checkUsername(String username) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("username").is(username));
+        return mongoTemplate.count(query, UserEntity.class) > 0;
     }
 }

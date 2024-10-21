@@ -1,30 +1,29 @@
 package shop.freenanum.trade.model.entity;
 
-import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-@Entity
+@Document(collection = "reply")
 @Getter
 @Setter
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "reply")
 public class ReplyEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private String id;
 
     @NotNull
     @Length(min = 1, max = 255)
-    String replyContent;
+    private String replyContent;
 
     @NotNull
-    Long userId;
+    private String userId;
 
     @NotNull
-    Long productId;
+    private String productId;
 }

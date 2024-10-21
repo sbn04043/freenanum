@@ -1,26 +1,25 @@
 package shop.freenanum.trade.model.entity;
 
 
-import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-@Entity
+@Document(collection = "like")
 @Getter
 @Setter
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "save")
 public class LikeEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
     @NotNull
-    private Long userId;
+    private String userId;
 
     @NotNull
-    private Long productId;
+    private String productId;
 }

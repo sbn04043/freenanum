@@ -2,11 +2,15 @@ package shop.freenanum.trade.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import shop.freenanum.trade.model.domain.UserModel;
 import shop.freenanum.trade.model.entity.UserEntity;
 import shop.freenanum.trade.model.repository.UserRepository;
 import shop.freenanum.trade.service.UserService;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -15,7 +19,28 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
-//    private final PasswordEncoder passwordEncoder;
+    //    private final PasswordEncoder passwordEncoder;
+//    private static final String IMAGE_DIRECTORY = "src/main/resources/static/images/profile/";
+    String directoryPath = System.getProperty("user.dir") + File.separator + "src" + File.separator + "main" + File.separator + "resources" + File.separator + "static" + File.separator + "images" + File.separator + "profile";
+
+    @Override
+    public UserEntity save(UserEntity user, MultipartFile profileImage) {
+        if (profileImage != null) {
+            String profileName = System.currentTimeMillis() + "_" + profileImage.getOriginalFilename();
+            File file = new File(Paths.get(directoryPath, profileName).toString());
+
+            try {
+                profileImage.transferTo(file);
+                user.setUrl(profileName);
+                return userRepository.save(user).block();
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+        } else {
+            return userRepository.save(user).block();
+        }
+    }
 
     @Override
     public String login(String username, String password) {
@@ -44,12 +69,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<UserEntity> findById(Long id) {
-        return userRepository.findById(id);
+    public Optional<UserEntity> findById(String id) {
+        return userRepository.findById(id).blockOptional();
     }
 
     @Override
-    public boolean existsById(Long id) {
+    public boolean existsById(String id) {
         return false;
     }
 
@@ -59,7 +84,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteById(Long id) {
+    public void deleteById(String id) {
 
     }
 }

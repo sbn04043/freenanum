@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import shop.freenanum.trade.model.domain.UserModel;
 import shop.freenanum.trade.model.entity.UserEntity;
 import shop.freenanum.trade.model.repository.UserRepository;
@@ -26,11 +27,41 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public String register(@RequestBody UserModel userModel, Model model) {
-        System.out.println("userModel: " + userModel);
-        userModel.setPassword(userModel.getPassword());
-        userRepository.save(UserEntity.toRegisterEntity(userModel));
-        return "redirect:/api/products/list";
+    public String register(@RequestParam("username") String username,
+                           @RequestParam("password") String password,
+                           @RequestParam("name") String name,
+                           @RequestParam("nickname") String nickname,
+                           @RequestParam("phone") String phone,
+                           @RequestParam("userAddress") String userAddress,
+                           @RequestParam("gender") String gender,
+                           @RequestParam(value = "profileImage", required = false) MultipartFile profileImage) {
+        if (profileImage != null) {
+            userService.save(UserEntity.toRegisterEntity(
+                    UserModel.builder()
+                            .username(username)
+                            .password(password)
+                            .name(name)
+                            .nickname(nickname)
+                            .phone(phone)
+                            .userAddress(userAddress)
+                            .gender(gender)
+                            .build()
+            ), profileImage);
+        } else {
+            userRepository.save(UserEntity.toRegisterEntity(
+                    UserModel.builder()
+                            .username(username)
+                            .password(password)
+                            .name(name)
+                            .nickname(nickname)
+                            .phone(phone)
+                            .userAddress(userAddress)
+                            .gender(gender)
+                            .build()
+            ));
+        }
+
+        return "redirect:/api/users/signup";
     }
 
     @GetMapping("/list")

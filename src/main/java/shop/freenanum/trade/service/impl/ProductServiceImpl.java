@@ -26,10 +26,7 @@ import shop.freenanum.trade.service.ProductService;
 
 import java.io.IOException;
 import java.time.Duration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -45,7 +42,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductEntity save(ProductEntity productEntity) {
-        return productRepository.save(productEntity);
+        return productRepository.save(productEntity).block();
     }
 
     @Override
@@ -100,8 +97,8 @@ public class ProductServiceImpl implements ProductService {
                 priceText = priceText.replaceAll("[^0-9]", "");
                 long price = Long.parseLong(priceText);
 
-                Long productId = productRepository.save(ProductEntity.builder()
-                                .userId(1L)
+                String productId = Objects.requireNonNull(productRepository.save(ProductEntity.builder()
+                                .userId("1")
                                 .productTitle(title)
                                 .productAddress(address)
                                 .productDescription(description)
@@ -109,7 +106,7 @@ public class ProductServiceImpl implements ProductService {
                                 .price(price)
                                 .views(0L)
                                 .build())
-                        .getId();
+                        .block()).getId();
 
                 List<WebElement> portraitElements = driver.findElements(By.className("portrait"));
                 if (!portraitElements.isEmpty()) {

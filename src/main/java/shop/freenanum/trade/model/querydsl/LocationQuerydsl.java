@@ -10,9 +10,9 @@ public interface LocationQuerydsl {
 
     List<LocationEntity> getList();
 
-    LocationEntity getByLocationId(Long id);
+    LocationEntity getByLocationId(String id);
 
-    boolean existsLocation(Long id);
+    boolean existsLocation(String id);
 
     long getRowCount();
 }

@@ -118,21 +118,8 @@ const logoutHandler = () => {
 const signUpHandler = () => {
     const signupBtn = document.getElementById('signupBtn');
     signupBtn.addEventListener('click', function () {
-        alert('회원가입 페이지로 이동');
-        axios({
-            method: 'GET',
-            url: '/api/users/signup'
-        })
-            .then(response => {
-                if (response.status === 200) {
-                    alert('이동');
-                }
-            })
-            .catch(error => {
-                alert('이동 실패: ' + error);
-            })
+        window.location.href = "/api/users/signup";
     })
 }
 
-const
 

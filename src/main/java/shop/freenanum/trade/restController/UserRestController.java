@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import shop.freenanum.trade.model.domain.UserModel;
 import shop.freenanum.trade.model.entity.UserEntity;
 import shop.freenanum.trade.model.repository.UserRepository;
@@ -17,10 +18,16 @@ import java.util.Map;
 @RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:3000") // 허용할 출처
 public class UserRestController {
-//    private final JwtUtil jwtUtil;
+    //    private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
     private final HttpSession httpSession;
 //    private final PasswordEncoder passwordEncoder;
+
+    @PostMapping("/checkUsername")
+    public ResponseEntity<Boolean> checkUsername(@RequestBody Map<String, String> request) {
+        String username = request.get("username");
+        return ResponseEntity.ok(userRepository.checkUsername(username));
+    }
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody UserModel userModel) throws Exception {

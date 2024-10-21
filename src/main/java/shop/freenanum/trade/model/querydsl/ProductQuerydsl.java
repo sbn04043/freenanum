@@ -8,21 +8,21 @@ import java.util.List;
 public interface ProductQuerydsl {
     Long searchCount(String locationInput, String productInput);
 
-    ProductModel getProductWithImgUrl(Long id);
+    ProductModel getProductWithImgUrl(String id);
 
-    ProductModel getProductWithNickname(Long id);
+    ProductModel getProductWithNickname(String id);
 
     List<ProductEntity> getHotList();
 
     List<ProductEntity> getList();
 
-    ProductEntity getByProductId(Long id);
+    ProductEntity getByProductId(String id);
 
-    boolean existsProduct(Long id);
+    boolean existsProduct(String id);
 
     long getRowCount();
 
-    List<ProductEntity> getByUserId(Long userId);
+    List<ProductEntity> getByUserId(String userId);
 
     List<ProductEntity> search(Long pageNo, String locationInput, String productInput);
 }

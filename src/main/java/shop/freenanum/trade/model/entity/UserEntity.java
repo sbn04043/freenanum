@@ -1,9 +1,10 @@
 package shop.freenanum.trade.model.entity;
 
-import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 import shop.freenanum.trade.model.domain.UserModel;
 
 import java.util.Collection;
@@ -11,18 +12,16 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Entity
+@Document(collection = "user")
 @Getter
 @Setter
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "user")
 public class UserEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
     @NotNull
     @Length(max = 40)
@@ -57,9 +56,6 @@ public class UserEntity {
 
     @Length(max = 20)
     private String gender;
-
-//    @ElementCollection(fetch = FetchType.EAGER)
-//    private List<String> roles;
 
     public static UserEntity toRegisterEntity(UserModel userModel) {
         return UserEntity.builder()

@@ -17,11 +17,11 @@ import java.nio.file.Paths;
 @Service
 @RequiredArgsConstructor
 public class ProductImageServiceImpl implements ProductImageService {
-    private static final String IMAGE_DIRECTORY = "src/main/resources/static/image/productImage/";
+    private static final String IMAGE_DIRECTORY = "src/main/resources/static/images/productImage/";
     private final ProductImageRepository productImageRepository;
 
     @Override
-    public void saveImage(Long productId, MultipartFile productImg) {
+    public void saveImage(String productId, MultipartFile productImg) {
         String fileName = System.currentTimeMillis() + "_" + productImg.getOriginalFilename(); // 고유한 파일 이름 생성
         File file = new File(Paths.get(IMAGE_DIRECTORY, fileName).toString());
 
@@ -34,7 +34,7 @@ public class ProductImageServiceImpl implements ProductImageService {
     }
 
     @Override
-    public void saveImage(Long productId, String url) {
+    public void saveImage(String productId, String url) {
         // URL 유효성 검사
         try {
             URL imageUrl = new URL(url);

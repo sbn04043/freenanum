@@ -11,13 +11,15 @@ public interface UserQuerydsl {
 
     List<UserEntity> getList();
 
-    UserEntity getById(Long id);
+    UserEntity getById(String id);
 
-    boolean existsUser(Long id);
+    boolean existsUser(String id);
 
     long getRowCount();
 
     Optional<UserEntity> getByAddress(ProductEntity product);
 
     UserEntity findByUsernameAndPassword(String username, String password);
+
+    Boolean checkUsername(String username);
 }

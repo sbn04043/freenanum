@@ -2,18 +2,18 @@ spring:
   application:
     name: freenanum
 
-  # 데이터베이스 설정
-  datasource:
-    url: jdbc:mysql://211.188.50.38/freenanum
-    username: root
-    password: 1234
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    hikari:
-      maximum-pool-size: 10
-      minimum-idle: 5
-      idle-timeout: 600000
-      max-lifetime: 1000000
-      pool-name: HikariCP
+#  # 데이터베이스 설정
+#  datasource:
+#    url: jdbc:mysql://211.188.50.38/freenanum
+#    username: root
+#    password: 1234
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    hikari:
+#      maximum-pool-size: 10
+#      minimum-idle: 5
+#      idle-timeout: 600000
+#      max-lifetime: 1000000
+#      pool-name: HikariCP
 
   # Redis 설정
   data:
@@ -22,10 +22,7 @@ spring:
       port: 6379
       password: 1234
     mongodb:
-      host: 211.188.50.38
-      port: 27017
-      username: root
-      password: 1234
+      uri: mongodb://211.188.50.38:27017/freenanum
 
   # Thymeleaf 설정
   thymeleaf:
