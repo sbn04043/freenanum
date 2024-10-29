@@ -84,7 +84,7 @@
 
     <!-- 이미지 카드 -->
     <div class="image-card">
-        <img th:src="@{'/images/productImage/' + ${productImgUrls[0].productImg}}" alt="Uploaded Image"
+        <img th:src="@{'/image/productImage/' + ${productImgUrls[0].productImg}}" alt="Uploaded Image"
              id="image-slider"/>
     </div>
 
@@ -100,7 +100,7 @@
                 <div class="card-body d-flex align-items-center">
                     <div class="row d-flex justify-content-center align-items-center">
                         <div class="col-auto">
-                            <img th:src="@{/images/profile/userDefaultImg.png}" alt="프로필 사진"
+                            <img th:src="@{/image/profile/userDefaultImg.png}" alt="프로필 사진"
                                  class="rounded-circle me-2 profile-image"/>
                         </div>
                         <div class="col-auto">
@@ -145,7 +145,7 @@
     // 이미지 업데이트 함수
     function updateImage() {
         const imgElement = document.getElementById('image-slider');
-        imgElement.src = '/images/productImage/' + imageUrls[currentIndex].productImg;
+        imgElement.src = '/image/productImage/' + imageUrls[currentIndex].productImg;
     }
 
     // 왼쪽 버튼을 눌렀을 때
