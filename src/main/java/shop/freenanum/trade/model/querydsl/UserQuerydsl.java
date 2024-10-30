@@ -11,8 +11,6 @@ public interface UserQuerydsl {
 
     List<UserEntity> getList();
 
-    UserEntity getById(Long id);
-
     boolean existsUser(Long id);
 
     long getRowCount();
@@ -20,4 +18,6 @@ public interface UserQuerydsl {
     Optional<UserEntity> getByAddress(ProductEntity product);
 
     UserEntity findByUsernameAndPassword(String username, String password);
+
+    UserEntity getByUserId(Long userId);
 }

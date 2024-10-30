@@ -40,11 +40,6 @@ public class UserQuerydslImpl implements UserQuerydsl {
     }
 
     @Override
-    public UserEntity getById(Long id) {
-        return jpaQueryFactory.selectFrom(qUser).where(qUser.id.eq(id)).fetchOne();
-    }
-
-    @Override
     public boolean existsUser(Long id) {
         return !jpaQueryFactory.selectFrom(qUser).where(qUser.id.eq(id)).fetch().isEmpty();
     }
@@ -65,6 +60,14 @@ public class UserQuerydslImpl implements UserQuerydsl {
                 .selectFrom(qUser)
                 .where(qUser.username.eq(username)
                         .and(qUser.password.eq(password)))
+                .fetchOne();
+    }
+
+    @Override
+    public UserEntity getByUserId(Long userId) {
+        return jpaQueryFactory
+                .selectFrom(qUser)
+                .where(qUser.id.eq(userId))
                 .fetchOne();
     }
 }

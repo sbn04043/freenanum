@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
     showLoginModal();
     logoutHandler();
     signUpHandler();
+    chatHandler();
 });
 
 // 위치 검색을 실행하는 함수
@@ -126,6 +127,25 @@ const signUpHandler = () => {
             .then(response => {
                 if (response.status === 200) {
                     alert('이동');
+                }
+            })
+            .catch(error => {
+                alert('이동 실패: ' + error);
+            })
+    })
+}
+
+const chatHandler = () => {
+    const moveChatBtn = document.getElementById('moveChatBtn');
+    moveChatBtn.addEventListener('click', () => {
+        axios({
+            method: 'GET',
+            url: '/api/chat/home'
+        })
+            .then(response => {
+                if (response.status === 200) {
+                    alert('채팅 페이지로 이동');
+                    window.location.href = '/api/chat/home';
                 }
             })
             .catch(error => {

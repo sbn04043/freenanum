@@ -2,6 +2,7 @@ package shop.freenanum.trade.restController;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,10 +18,9 @@ import java.util.Map;
 @RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:3000") // 허용할 출처
 public class UserRestController {
-//    private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
     private final HttpSession httpSession;
-//    private final PasswordEncoder passwordEncoder;
+    private final RedisTemplate<String, Object> redisTemplate;
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody UserModel userModel) throws Exception {
@@ -29,8 +29,9 @@ public class UserRestController {
             System.out.println("로그인 실패");
             return ResponseEntity.ok("로그인 실패");
         } else {
-            httpSession.setAttribute("user", userEntity);
-            System.out.println("로그인 성공");
+            System.out.println("로그인 성공: " + userEntity);
+            httpSession.setAttribute("loginUser", userEntity);
+            redisTemplate.opsForValue().set("loginUser", userEntity);
             return ResponseEntity.ok("로그인 성공");
         }
     }

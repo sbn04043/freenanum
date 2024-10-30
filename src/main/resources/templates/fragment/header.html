@@ -49,17 +49,17 @@
                                 border-radius: 5px;"></div>
                     </li>
                 </ul>
-                <div th:if="${session.user != null}">
+                <div th:if="${session.loginUser != null}">
                     <div style="display: flex; gap: 10px;"> <!-- 버튼 간의 간격을 주기 위해 gap 사용 -->
                         <button type="button" class="btn btn-primary" id="logoutBtn"
                                 th:text="로그아웃" onclick="logoutHandler()">
                         </button>
-                        <button type="button" class="btn btn-primary" id="chatHandler"
-                                th:text="채팅하기" onclick="">
+                        <button type="button" class="btn btn-primary" id="moveChatBtn"
+                                th:text="채팅하기" onclick="chatHandler()">
                         </button>
                     </div>
                 </div>
-                <div th:if="${session.user == null}">
+                <div th:if="${session.loginUser == null}">
                     <div style="display: flex; gap: 10px;"> <!-- 버튼 간의 간격을 주기 위해 gap 사용 -->
                         <div th:replace="~{/fragment/loginModal :: loginModalButton}"></div>
                         <div th:replace="~{/fragment/loginModal :: loginModal}"></div>
