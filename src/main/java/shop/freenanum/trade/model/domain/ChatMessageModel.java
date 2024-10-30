@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 
 @Component
 @Getter
@@ -24,5 +24,5 @@ public class ChatMessageModel {
 
     private String content; // 메시지 내용
 
-    private LocalDateTime timestamp; // 메시지 전송 시간
+    private Timestamp timestamp; // 메시지 전송 시간
 }

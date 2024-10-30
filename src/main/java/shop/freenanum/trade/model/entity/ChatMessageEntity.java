@@ -5,7 +5,9 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.mapping.Document;
+import shop.freenanum.trade.model.domain.ChatMessageModel;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @Getter
@@ -33,5 +35,15 @@ public class ChatMessageEntity {
     private String content; // 메시지 내용
 
     @NotNull
-    private LocalDateTime timestamp; // 메시지 전송 시간
+    private Timestamp timestamp; // 메시지 전송 시간
+
+    public static ChatMessageEntity toEntity(ChatMessageModel chatMessageModel) {
+        return ChatMessageEntity.builder()
+                .chatRoomId(chatMessageModel.getChatRoomId())
+                .senderId(chatMessageModel.getSenderId())
+                .receiverId(chatMessageModel.getReceiverId())
+                .content(chatMessageModel.getContent())
+                .timestamp(chatMessageModel.getTimestamp())
+                .build();
+    }
 }
