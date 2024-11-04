@@ -70,4 +70,5 @@ public class UserQuerydslImpl implements UserQuerydsl {
                 .where(qUser.id.eq(userId))
                 .fetchOne();
     }
+
 }

@@ -1,5 +1,6 @@
 package shop.freenanum.trade.service;
 
+import reactor.core.publisher.Mono;
 import shop.freenanum.trade.model.domain.ChatRoomModel;
 import shop.freenanum.trade.model.entity.ChatMessageEntity;
 

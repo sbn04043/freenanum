@@ -15,17 +15,13 @@ spring:
       max-lifetime: 1000000
       pool-name: HikariCP
 
-  # Redis 설정
   data:
     redis:
       host: localhost
       port: 6379
-      password: 1234
+      password: freenanum
     mongodb:
-      host: localhost
-      port: 27017
-      username: root
-      password: 1234
+      uri: mongodb://junsu:1234@localhost:27017/freenanum
 
   # Thymeleaf 설정
   thymeleaf:

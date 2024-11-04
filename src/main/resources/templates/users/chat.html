@@ -1,115 +1,28 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <title>Chat</title>
-    <link th:href="@{/css/styles.css}" rel="stylesheet"/>
+    <title>채팅</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
 </head>
 <body>
-<!-- Navigation-->
-<div th:replace="~{/fragment/header :: header}"></div>
-<div class="container">
-    <h1 class="my-4">채팅</h1>
-    <div class="chat-container">
-        <!-- 왼쪽: 대화 상대 리스트 -->
-        <div class="user-list">
-            <h5 class="p-3">대화 상대</h5>
-            <div class="user-item" onclick="selectUser('User 1')">
-                <img src="/image/profile/userDefaultImg.png" alt="User 1" class="profile-image">
-                User 1
-            </div>
-            <div class="user-item" onclick="selectUser('User 2')">
-                <img src="/image/profile/userDefaultImg.png" alt="User 1" class="profile-image">
-                User 2
-            </div>
-            <div class="user-item" onclick="selectUser('User 3')">
-                <img src="/image/profile/userDefaultImg.png" alt="User 1" class="profile-image">
-                User 3
-            </div>
-        </div>
-        <!-- 오른쪽: 현재 대화 중인 상대와의 채팅 기록 -->
-        <div class="chat-box">
-            <h5 id="current-user">User 1과의 대화</h5>
-            <div class="messages">
-                <div class="message-container other">
-                    <div class="message other">안녕하세요!</div>
-                    <div class="message-time">오전 10:00</div>
-                </div>
-                <div class="message-container user">
-                    <div class="message user">안녕하세요! 어떻게 도와드릴까요?</div>
-                    <div class="message-time">오전 10:01</div>
-                </div>
-                <div class="message-container other">
-                    <div class="message other">제품에 대해 문의하고 싶어요.</div>
-                    <div class="message-time">오전 10:02</div>
-                </div>
-            </div>
-
-            <!-- Fixed input box inside chat-box -->
-            <div class="input-group mt-3">
-                <div class="input-group-prepend">
-                    <button class="btn btn-outline-secondary" type="button" id="attachButton">
-                        📎
-                    </button>
-                </div>
-                <input type="file" id="fileInput" style="display: none;">
-                <input type="text" class="form-control" placeholder="메시지를 입력하세요..." id="chatInput">
-                <div class="input-group-append">
-                    <button class="btn btn-primary" onclick="sendMessage()">전송</button>
-                </div>
-            </div>
-        </div>
-    </div>
+<h1>1:1 채팅</h1>
+<div id="chatRoomList">
+    <ul>
+        <li th:each="chatRoom : ${loginUserChatRoomList}" th:text="test"
+            onclick="connect([[${chatRoom.id}]])"></li>
+    </ul>
 </div>
 
-<!-- Footer-->
-<div th:replace="~{/fragment/footer :: footer}"></div>
-<script>
-    function selectUser(userName) {
-        document.getElementById('current-user').innerText = userName + '과의 대화';
-        // 여기에 해당 유저의 채팅 기록을 불러오는 로직 추가
-    }
+<div id="chatBox">
+    <!-- 채팅 메시지가 이곳에 표시됩니다 -->
+</div>
 
-    function sendMessage() {
-        const message = document.getElementById('chatInput').value;
-        const time = new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
+<input type="hidden" id="chatRoomId" th:value="1">
+<input type="text" id="messageInput" placeholder="메시지를 입력하세요">
+<button onclick="sendMessage()">보내기</button>
 
-        if (message) {
-            const messagesContainer = document.querySelector('.messages');
-            const newMessageContainer = document.createElement('div');
-            newMessageContainer.className = 'message-container user';
 
-            const newMessage = document.createElement('div');
-            newMessage.className = 'message user';
-            newMessage.innerText = message;
-
-            const messageTime = document.createElement('div');
-            messageTime.className = 'message-time';
-            messageTime.innerText = time;
-
-            newMessageContainer.appendChild(newMessage);
-            newMessageContainer.appendChild(messageTime);
-            messagesContainer.appendChild(newMessageContainer);
-
-            document.getElementById('chatInput').value = ''; // 입력창 비우기
-            messagesContainer.scrollTop = messagesContainer.scrollHeight; // 스크롤을 아래로 자동 이동
-            // 여기에 메시지를 서버로 전송하는 로직 추가
-        }
-    }
-
-    // Enter 키 입력 시 메시지 전송
-    document.getElementById('chatInput').addEventListener('keydown', function(event) {
-        if (event.key === 'Enter') {
-            sendMessage();
-        }
-    });
-
-    // 첨부파일 버튼 클릭 시 파일 첨부창 열기
-    document.getElementById('attachButton').addEventListener('click', function() {
-        document.getElementById('fileInput').click();
-    });
-</script>
 </body>
 </html>

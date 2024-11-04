@@ -3,6 +3,7 @@ package shop.freenanum.trade.model.querydsl.impl;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import reactor.core.publisher.Mono;
 import shop.freenanum.trade.model.domain.ChatRoomModel;
 import shop.freenanum.trade.model.entity.ChatRoomEntity;
 import shop.freenanum.trade.model.entity.QChatRoomEntity;
@@ -27,13 +28,16 @@ public class ChatRoomQuerydslImpl implements ChatRoomQuerydsl {
     }
 
     @Override
-    public ChatRoomEntity getOne(Long userId1, Long userId2) {
+    public ChatRoomEntity findByUserIdAndOtherUserId(Long userId1, Long userId2) {
         BooleanBuilder builder = new BooleanBuilder();
 
-        builder.or(qChatRoom.userId1.eq(userId1).and(qChatRoom.userId2.eq(userId2)));
-        builder.or(qChatRoom.userId2.eq(userId1)).and(qChatRoom.userId1.eq(userId2));
+        builder.or(qChatRoom.userId1.eq(userId1).and(qChatRoom.userId2.eq(userId2)))
+                .or(qChatRoom.userId2.eq(userId1).and(qChatRoom.userId1.eq(userId2)));
 
-        return jpaQueryFactory.selectFrom(qChatRoom).where(builder).fetchOne();
+        // 조건에 맞는 ChatRoomEntity를 바로 반환
+        return jpaQueryFactory.selectFrom(qChatRoom)
+                .where(builder)
+                .fetchOne();
     }
 
     @Override
@@ -44,5 +48,13 @@ public class ChatRoomQuerydslImpl implements ChatRoomQuerydsl {
                 .orderBy(qChatRoom.createdAt.desc())
                 .fetch();
 
+    }
+
+    @Override
+    public ChatRoomEntity getByChatRoomId(Long chatRoomId) {
+        return jpaQueryFactory
+                .selectFrom(qChatRoom)
+                .where(qChatRoom.id.eq(chatRoomId))
+                .fetchOne();
     }
 }

@@ -84,7 +84,7 @@ public class TestController {
         productServiceImpl.productCrawling();
 
 
-        return "/products/searchList";
+        return "redirect:/api/products/list";
     }
 }
 

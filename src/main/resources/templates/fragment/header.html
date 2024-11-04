@@ -54,9 +54,8 @@
                         <button type="button" class="btn btn-primary" id="logoutBtn"
                                 th:text="로그아웃" onclick="logoutHandler()">
                         </button>
-                        <button type="button" class="btn btn-primary" id="moveChatBtn"
-                                th:text="채팅하기" onclick="chatHandler()">
-                        </button>
+                        <a href="/api/users/chat" id="moveChatBtn" class="btn">채팅 페이지</a>
+
                     </div>
                 </div>
                 <div th:if="${session.loginUser == null}">

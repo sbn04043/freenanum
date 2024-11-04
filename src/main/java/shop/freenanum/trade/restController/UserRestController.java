@@ -51,12 +51,5 @@ public class UserRestController {
         return ResponseEntity.ok("로그아웃");
     }
 
-//    @GetMapping("/protected")
-//    @PreAuthorize("hasAuthority('ROLE_USER')") // ROLE_USER 권한을 가진 사용자만 접근 가능
-//    public ResponseEntity<String> getCurrentUser() {
-//        System.out.println("protected");
-//        String protectedResource = "이것은 보호된 리소스입니다.";
-//        return ResponseEntity.ok(protectedResource);
-//    }
-
+    
 }

@@ -98,10 +98,11 @@ public class ProductServiceImpl implements ProductService {
                 String description = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("article-detail"))).getText();
                 String priceText = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("article-price"))).getText();
                 priceText = priceText.replaceAll("[^0-9]", "");
-                long price = Long.parseLong(priceText);
+
+                long price = priceText.isEmpty() ? 0 : Long.parseLong(priceText);
 
                 Long productId = productRepository.save(ProductEntity.builder()
-                                .userId(1L)
+                                .userId(1L + (long) (Math.random() * 10))
                                 .productTitle(title)
                                 .productAddress(address)
                                 .productDescription(description)

@@ -3,6 +3,7 @@ package shop.freenanum.trade.model.domain;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.springframework.stereotype.Component;
+import shop.freenanum.trade.model.entity.ChatMessageEntity;
 
 import java.sql.Timestamp;
 
@@ -24,5 +25,16 @@ public class ChatMessageModel {
 
     private String content; // 메시지 내용
 
-    private Timestamp timestamp; // 메시지 전송 시간
+    private Timestamp createdAt; // 메시지 전송 시간
+
+    public static ChatMessageModel toModel(ChatMessageEntity chatMessageEntity) {
+        return ChatMessageModel.builder()
+                .id(chatMessageEntity.getId())
+                .chatRoomId(chatMessageEntity.getChatRoomId())
+                .senderId(chatMessageEntity.getSenderId())
+                .receiverId(chatMessageEntity.getReceiverId())
+                .content(chatMessageEntity.getContent())
+                .createdAt(chatMessageEntity.getCreatedAt())
+                .build();
+    }
 }

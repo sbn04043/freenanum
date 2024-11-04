@@ -2,6 +2,7 @@ package shop.freenanum.trade.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 import shop.freenanum.trade.model.domain.ChatRoomModel;
 import shop.freenanum.trade.model.entity.ChatMessageEntity;
 import shop.freenanum.trade.model.entity.ChatRoomEntity;
@@ -23,24 +24,31 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public void saveMessage(ChatMessageEntity chatMessageEntity) {
-        chatMessageEntity.setTimestamp(LocalDateTime.now());
+        chatMessageEntity.setCreatedAt(new Timestamp(System.currentTimeMillis()));
         chatMessageRepository.save(chatMessageEntity);
     }
 
     @Override
     public ChatRoomModel getChatRoom(Long userId1, Long userId2) {
-        if (chatRoomRepository.isExistByUserId1AndUserId2(userId1, userId2)) {
-            return ChatRoomModel.toModel(chatRoomRepository.getOne(userId1, userId2));
+        ChatRoomEntity chatRoomEntity = chatRoomRepository.findByUserIdAndOtherUserId(userId1, userId2);
+
+        if (chatRoomEntity != null) {
+            // 채팅방이 존재하는 경우
+            return ChatRoomModel.toModel(chatRoomEntity);
         } else {
-            return ChatRoomModel.toModel(chatRoomRepository.save(ChatRoomEntity.builder()
+            // 채팅방이 존재하지 않는 경우 새로 생성
+            ChatRoomEntity newChatRoom = ChatRoomEntity.builder()
                     .userId1(userId1)
                     .nickname1(userRepository.getByUserId(userId1).getNickname())
                     .userId2(userId2)
                     .nickname2(userRepository.getByUserId(userId2).getNickname())
                     .createdAt(Timestamp.valueOf(LocalDateTime.now()))
-                    .build()));
+                    .build();
+
+            return ChatRoomModel.toModel(chatRoomRepository.save(newChatRoom));
         }
     }
+
 
     @Override
     public List<ChatRoomModel> getLoginUserChatRooms(Long id) {

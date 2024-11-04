@@ -35,7 +35,7 @@ public class ChatMessageEntity {
     private String content; // 메시지 내용
 
     @NotNull
-    private Timestamp timestamp; // 메시지 전송 시간
+    private Timestamp createdAt; // 메시지 전송 시간
 
     public static ChatMessageEntity toEntity(ChatMessageModel chatMessageModel) {
         return ChatMessageEntity.builder()
@@ -43,7 +43,7 @@ public class ChatMessageEntity {
                 .senderId(chatMessageModel.getSenderId())
                 .receiverId(chatMessageModel.getReceiverId())
                 .content(chatMessageModel.getContent())
-                .timestamp(chatMessageModel.getTimestamp())
+                .createdAt(chatMessageModel.getCreatedAt())
                 .build();
     }
 }
