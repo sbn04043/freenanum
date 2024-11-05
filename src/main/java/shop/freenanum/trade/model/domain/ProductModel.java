@@ -38,6 +38,7 @@ public class ProductModel {
     public static ProductModel toModel(ProductEntity productEntity) {
         return ProductModel.builder()
                 .id(productEntity.getId())
+                .userId(productEntity.getUserId())
                 .productTitle(productEntity.getProductTitle())
                 .productAddress(productEntity.getProductAddress())
                 .productDescription(productEntity.getProductDescription())

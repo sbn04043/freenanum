@@ -10,7 +10,7 @@ public interface ProductQuerydsl {
 
     ProductModel getProductWithImgUrl(Long id);
 
-    ProductModel getProductWithNickname(Long id);
+    ProductEntity getProductById(Long id);
 
     List<ProductEntity> getHotList();
 

@@ -38,10 +38,12 @@ public class ProductController {
 
     @GetMapping("/{id}")
     public String showProduct(@PathVariable("id") Long id, Model model) {
-        System.out.println("product");
-        model.addAttribute("product", productRepository.getProductWithNickname(id));
+        ProductModel productModel = ProductModel.toModel(productRepository.getProductById(id));
+        System.out.println("product: " + productModel);
+        model.addAttribute("product", productModel);
         System.out.println("productImg");
         model.addAttribute("productImgUrls", productImageRepository.findByProductId(id));
+        model.addAttribute("seller", userRepository.getByUserId(productModel.getUserId()));
         System.out.println("product done");
 
         return "products/showOne";

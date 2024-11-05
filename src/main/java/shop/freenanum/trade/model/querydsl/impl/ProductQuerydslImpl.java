@@ -54,37 +54,19 @@ public class ProductQuerydslImpl implements ProductQuerydsl {
                         qProductEntity.productDescription,
                         qProductEntity.productStatus,
                         qProductEntity.price,
-                        qProductEntity.views,
-                        qProductImgEntity.productImg // imgUrl로 설정
+                        qProductEntity.views
                 ))
                 .from(qProductEntity)
-                .leftJoin(qProductImgEntity).on(qProductImgEntity.productId.eq(qProductEntity.id)) // 여기서 ID를 비교
                 .where(qProductEntity.id.eq(id))
                 .limit(1)
                 .fetchOne();
     }
 
     @Override
-    public ProductModel getProductWithNickname(Long id) {
+    public ProductEntity getProductById(Long id) {
         return jpaQueryFactory
-                .select(Projections.constructor(
-                        ProductModel.class,
-                        qProductEntity.id,
-                        qProductEntity.userId,
-                        qProductEntity.productTitle,
-                        qProductEntity.productAddress,
-                        qProductEntity.productDescription,
-                        qProductEntity.productStatus,
-                        qProductEntity.price,
-                        qProductEntity.views,
-                        qUserEntity.nickname, // nickname
-                        qProductImgEntity.productImg // imgUrl로 설정
-                ))
-                .from(qProductEntity)
-                .leftJoin(qUserEntity).on(qProductEntity.userId.eq(qUserEntity.id))
-                .leftJoin(qProductImgEntity).on(qProductImgEntity.productId.eq(qProductEntity.id)) // 여기서 ID를 비교
+                .selectFrom(qProductEntity)
                 .where(qProductEntity.id.eq(id))
-                .limit(1)
                 .fetchOne();
     }
 
