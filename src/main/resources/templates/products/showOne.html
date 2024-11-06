@@ -4,9 +4,8 @@
     <title>홈</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet"/>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
-
-    <!--    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>-->
     <link th:href="@{/css/styles.css}" rel="stylesheet"/>
+
     <style>
         .image-slider-container {
             display: flex;
@@ -73,7 +72,6 @@
             }
         }
 
-        /*chat css*/
         .chat-container {
             display: flex;
             flex-direction: column;
@@ -110,7 +108,14 @@
             align-self: flex-start; /* 왼쪽 정렬 */
         }
 
+        /* 입력창과 버튼 스타일 */
+        .input-group {
+            display: flex;
+            align-items: center;
+        }
+
         .chat-input {
+            flex: 1;
             border-radius: 5px 0 0 5px; /* 모서리 둥글게 */
         }
 
@@ -120,7 +125,7 @@
     </style>
 </head>
 <body>
-<!-- Navigation-->
+Navigation
 <div th:replace="~{/fragment/header :: header}"></div>
 <div th:fragment="chatModal">
     <!-- 채팅 모달 -->
@@ -213,6 +218,7 @@
     </div>
 </div>
 
+<div id="sellerId" data-id="${seller.id}"></div>
 
 <!-- Footer-->
 <div th:replace="~{/fragment/footer :: footer}"></div>
@@ -222,17 +228,16 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script th:inline="javascript">
-    // JavaScript 배열로 이미지 URL 리스트 저장
-    document.getElementById('chatRoomId').value = 0;
     let chatRoomId = 0;
+    let stompClient = null;
+    let currentIndex = 0;
+    let sellerId = /*[[${product.userId}]]*/;
 
-
+    // JavaScript 배열로 이미지 URL 리스트 저장
     const imageUrls = /*[[${productImgUrls}]]*/ [];
     if (imageUrls.length === 0) {
         console.error('이미지가 없습니다.');
     }
-
-    let currentIndex = 0;
 
     // 이미지 업데이트 함수
     function updateImage() {
@@ -288,8 +293,6 @@
                 const opponentUser = response.data.opponentUser
                 displayMessagesInModal(messages, opponentUser); // 상대방 정보를 적절히 전달
 
-                document.getElementById('chatRoomId').value = chatRoomId;
-
                 connect(chatRoomId)
             })
             .catch(error => {
@@ -312,17 +315,25 @@
     }
 
     function displayMessagesInModal(messages, opponentUser) {
+        // 채팅 메시지 컨테이너 초기화
         const chatMessagesContainer = document.getElementById('messageContainer');
         chatMessagesContainer.innerHTML = ''; // 이전 메시지 초기화
 
         if (messages.length === 0) {
             chatMessagesContainer.innerHTML = '<p>메시지가 없습니다.</p>'; // 메시지가 없을 때 표시
         } else {
+            // 각 메시지 처리
             messages.forEach(message => {
                 const messageElement = document.createElement('div');
                 messageElement.classList.add('message'); // 메시지 스타일을 위한 클래스 추가
-                messageElement.innerHTML = `<strong>${opponentUser.nickname}:</strong> ${message.content}`; // 메시지 내용
-                messageElement.classList.add(message.senderId ===  /*[[${session.loginUser.id}]]*/ 'default' ? 'sent' : 'received'); // 송신자에 따라 스타일 적용
+
+                // 메시지 내용 설정
+                messageElement.innerHTML = `<strong>${message.receiverId === opponentUserId ? opponentUser.nickname : '나'}:</strong> ${message.content}`;
+
+                // 메시지 발송자에 따른 스타일 클래스 추가 (보낸 메시지 또는 받은 메시지)
+                messageElement.classList.add(message.receiverId === opponentUserId ? 'received' : 'sent');
+
+                // 메시지 요소를 컨테이너에 추가
                 chatMessagesContainer.appendChild(messageElement);
             });
         }
@@ -332,15 +343,13 @@
         chatModal.show();
     }
 
-    let stompClient = null;
-
     function connect(userId) {
         const socket = new SockJS('/ws');
         stompClient = Stomp.over(socket);
 
-        stompClient.connect({}, function(frame) {
+        stompClient.connect({}, function (frame) {
             console.log('Connected: ' + frame);
-            stompClient.subscribe('/queue/chat/' + userId, function(message) {
+            stompClient.subscribe('/queue/chat/' + userId, function (message) {
                 displayMessage(JSON.parse(message.body));
             });
         });
@@ -351,8 +360,10 @@
         const chatMessage = {
             chatRoomId: chatRoomId,
             content: messageContent,
-            timestamp: new Date().toISOString()
+            receiverId: sellerId,
         };
+
+        console.log("chatMessage: " + chatMessage);
 
         stompClient.send("/app/sendMessage", {}, JSON.stringify(chatMessage));
         document.getElementById('chatInput').value = ''; // 입력창 초기화
@@ -364,6 +375,7 @@
         messageElement.innerHTML = `<strong>${message.senderId}:</strong> ${message.content}`;
         messageContainer.appendChild(messageElement);
     }
+
 </script>
 
 </body>

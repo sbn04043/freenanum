@@ -1,5 +1,6 @@
 package shop.freenanum.trade.controller;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -37,7 +38,7 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public String showProduct(@PathVariable("id") Long id, Model model) {
+    public String showProduct(@PathVariable("id") Long id, Model model, HttpSession httpSession) {
         ProductModel productModel = ProductModel.toModel(productRepository.getProductById(id));
         System.out.println("product: " + productModel);
         model.addAttribute("product", productModel);

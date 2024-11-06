@@ -1,11 +1,13 @@
 package shop.freenanum.trade.handler;// ChatWebSocketHandler.java
 
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
+import shop.freenanum.trade.model.domain.UserModel;
 import shop.freenanum.trade.model.entity.ChatMessageEntity;
 import shop.freenanum.trade.service.ChatService;
 
@@ -21,9 +23,18 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
     private final Map<Long, WebSocketSession> sessionMap = new HashMap<>();
 
     @Override
-    public void afterConnectionEstablished(WebSocketSession session) {
-        Long userId = Long.parseLong(session.getPrincipal().getName());
-        sessionMap.put(userId, session);
+    public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+        System.out.println("WebSocket 연결이 성공적으로 설정되었습니다.");
+
+        // HttpSession을 가져옴
+        HttpSession httpSession = (HttpSession) session.getAttributes().get("HTTP_SESSION");
+
+        if (httpSession != null) {
+            Long loginUserId = ((UserModel) httpSession.getAttribute("loginUser")).getId();
+            session.getAttributes().put("loginUserId", loginUserId);  // WebSocket 세션에 loginUserId 저장
+        }
+
+        super.afterConnectionEstablished(session);
     }
 
     @Override

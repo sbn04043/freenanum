@@ -33,8 +33,8 @@ public class UserRestController {
             System.out.println("로그인 성공: " + loginUser);
             httpSession.setAttribute("loginUser", loginUser);
 
-            redisTemplate.opsForValue().set("user:" + loginUser.getId() + ":chatRooms"
-                    , chatRoomRepository.getLoginUserChatRooms(loginUser.getId()));
+//            redisTemplate.opsForValue().set("user:" + loginUser.getId() + ":chatRooms"
+//                    , chatRoomRepository.getLoginUserChatRooms(loginUser.getId()));
             return ResponseEntity.ok("로그인 성공");
         }
     }

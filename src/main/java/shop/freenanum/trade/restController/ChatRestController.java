@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -93,17 +94,28 @@ public class ChatRestController {
     }
 
     @MessageMapping("/sendMessage")
-    public void sendMessage(ChatMessageEntity chatMessage, HttpSession httpSession) {
-        UserModel loginUser = (UserModel) httpSession.getAttribute("loginUser");
-        chatMessage.setSenderId(loginUser.getId());
-        ChatRoomEntity chatRoomEntity = chatRoomRepository.getByChatRoomId(chatMessage.getChatRoomId());
-        if (loginUser.getId() == chatRoomEntity.getUserId1()) {
-            chatMessage.setReceiverId(chatRoomEntity.getUserId2());
+    public void sendMessage(ChatMessageEntity chatMessage, SimpMessageHeaderAccessor headerAccessor) {
+        Long loginUserId = (Long) headerAccessor.getSessionAttributes().get("loginUserId");
+        System.out.println("loginUserId: " + loginUserId);
+        if (loginUserId != null) {
+            chatMessage.setSenderId(loginUserId);
+            chatMessage.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+
+            ChatRoomEntity chatRoomEntity = chatRoomRepository.getByChatRoomId(chatMessage.getChatRoomId());
+            if (loginUserId.equals(chatRoomEntity.getUserId1())) {
+                chatMessage.setReceiverId(chatRoomEntity.getUserId2());
+            } else {
+                chatMessage.setReceiverId(chatRoomEntity.getUserId1());
+            }
+
+            System.out.println("chatMessage = " + chatMessage);
+
+            messagingTemplate.convertAndSend("/queue/chat/" + chatMessage.getChatRoomId(), chatMessage);
         } else {
-            chatMessage.setReceiverId(chatRoomEntity.getUserId1());
+            System.out.println("No user session found.");
         }
-        chatMessageRepository.save(chatMessage);
-        System.out.println(chatMessage);
+
+//        chatMessageRepository.save(chatMessage);
 
         messagingTemplate.convertAndSend("/queue/chat/" + chatMessage.getChatRoomId(), chatMessage);
     }
