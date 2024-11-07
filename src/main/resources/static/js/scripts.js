@@ -71,6 +71,7 @@ const loginHandler = () => {
             .then(response => {
                 if (response.status === 200) {
                     alert('로그인 성공!');
+                    connectWebSocket();
                     window.location.reload();
                 }
             })
@@ -107,6 +108,7 @@ const logoutHandler = () => {
             .then(response => {
                 if (response.status === 200) {
                     alert('로그아웃 성공');
+                    disconnectWebSocket();
                     window.location.reload();
                 }
             })
@@ -133,6 +135,32 @@ const signUpHandler = () => {
                 alert('이동 실패: ' + error);
             })
     })
+}
+
+let stompClient = null;
+function connectWebSocket() {
+    var socket = new SockJS('/ws/chat');
+    stompClient = Stomp.over(socket);
+    stompClient.connect({}, function (frame) {
+        console.log('Connected: ' + frame);
+        sessionStorage.setItem('isWebSocketConnected', 'true'); // 연결 상태 저장
+    });
+}
+
+// 페이지가 로드될 때 기존 연결이 존재하는지 확인 후 재연결
+document.addEventListener("DOMContentLoaded", function () {
+    if (sessionStorage.getItem('isConnected') === 'true') {
+        connectWebSocket();
+    }
+});
+
+function disconnectWebSocket() {
+    if (stompClient !== null) {
+        stompClient.disconnect(() => {
+            console.log("Disconnected from WebSocket");
+        });
+    }
+    sessionStorage.setItem('isWebSocketConnected', 'false'); // 연결 상태 저장
 }
 
 // const moveChatHome = () => {
