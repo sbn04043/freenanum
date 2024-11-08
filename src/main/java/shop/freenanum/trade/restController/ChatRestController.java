@@ -1,6 +1,7 @@
 package shop.freenanum.trade.restController;
 
 import jakarta.servlet.http.HttpSession;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -32,7 +33,6 @@ public class ChatRestController {
     private final UserRepository userRepository;
     private final SimpMessagingTemplate messagingTemplate;
 
-
     @GetMapping("/checkChatRoom/{userId}")
     public ResponseEntity<Map<String, Object>> checkChatRoom(@PathVariable Long userId, HttpSession session) {
         System.out.println("userId = " + userId + ", session = " + session);
@@ -50,11 +50,9 @@ public class ChatRestController {
         }
     }
 
-
     @GetMapping("/createChatRoom/{userId}")
     public ResponseEntity<Map<String, Object>> createChatRoom(@PathVariable Long userId, HttpSession session) {
         UserModel loginUser = ((UserModel) session.getAttribute("loginUser"));
-
 
         ChatRoomModel chatRoomModel = ChatRoomModel.toModel(chatRoomRepository.save(ChatRoomEntity.builder()
                 .userId1(userId)
@@ -69,32 +67,39 @@ public class ChatRestController {
         return ResponseEntity.ok(response);
     }
 
+    @Transactional
     @GetMapping("/getChatMessages/{chatRoomId}")
-    public ResponseEntity<Map<String, Object>> getChatMessages(@PathVariable Long chatRoomId, HttpSession httpSession) {
-        List<ChatMessageEntity> chatMessageEntityList = chatMessageRepository.findByChatRoomId(chatRoomId)
-                .collectList()
-                .block();
+    public Mono<ResponseEntity<Map<String, Object>>> getChatMessages(@PathVariable Long chatRoomId, HttpSession httpSession) {
+        return chatMessageRepository.findByChatRoomId(chatRoomId)  // MongoDB에서 가져오는 Flux 데이터
+                .collectList()  // Flux를 List로 변환
+                .flatMap(chatMessageEntityList -> {
+                    Map<String, Object> result = new HashMap<>();
+                    UserModel loginUser = (UserModel) httpSession.getAttribute("loginUser");
 
-        Map<String, Object> result = new HashMap<>();
+                    // MySQL 데이터는 동기적으로 조회
+                    Optional<ChatRoomEntity> chatRoomEntityOptional = chatRoomRepository.findById(chatRoomId);
+                    if (chatRoomEntityOptional.isPresent()) {
+                        ChatRoomEntity chatRoomEntity = chatRoomEntityOptional.get();
+                        UserModel opponentUser;
 
-        UserModel loginUser = (UserModel) httpSession.getAttribute("loginUser");
-        ChatRoomEntity chatRoomEntity = chatRoomRepository.getById(chatRoomId);
-        UserModel opponentUser = new UserModel();
-        if (chatRoomEntity.getUserId1() == loginUser.getId()) {
-            opponentUser = UserModel.toModel(userRepository.getByUserId(chatRoomEntity.getUserId2()));
-        } else {
-            opponentUser = UserModel.toModel(userRepository.getByUserId(chatRoomEntity.getUserId1()));
-        }
+                        if (chatRoomEntity.getUserId1() == loginUser.getId()) {
+                            opponentUser = UserModel.toModel(userRepository.getByUserId(chatRoomEntity.getUserId2()));
+                        } else {
+                            opponentUser = UserModel.toModel(userRepository.getByUserId(chatRoomEntity.getUserId1()));
+                        }
 
-        result.put("chatMessages", chatMessageEntityList != null ? chatMessageEntityList : new ArrayList<>()); // 빈 리스트 반환
-        result.put("opponentUser", opponentUser);
+                        result.put("chatMessages", chatMessageEntityList != null ? chatMessageEntityList : new ArrayList<>());
+                        result.put("opponentUser", opponentUser);
 
-
-        return ResponseEntity.ok(result);
+                        return Mono.just(ResponseEntity.ok(result));
+                    } else {
+                        return Mono.just(ResponseEntity.notFound().build());  // 채팅방이 없는 경우
+                    }
+                });
     }
 
     @MessageMapping("/sendMessage")
-    public void sendMessage(ChatMessageEntity chatMessage, SimpMessageHeaderAccessor headerAccessor) {
+    public Mono<ChatMessageEntity> sendMessage(ChatMessageEntity chatMessage, SimpMessageHeaderAccessor headerAccessor) {
         Long loginUserId = (Long) headerAccessor.getSessionAttributes().get("loginUserId");
         System.out.println("loginUserId: " + loginUserId);
         if (loginUserId != null) {
@@ -108,15 +113,17 @@ public class ChatRestController {
                 chatMessage.setReceiverId(chatRoomEntity.getUserId1());
             }
 
-            System.out.println("chatMessage = " + chatMessage);
-
-            messagingTemplate.convertAndSend("/queue/chat/" + chatMessage.getChatRoomId(), chatMessage);
+            return chatMessageRepository.save(chatMessage)
+                    .doOnSuccess(savedMessage -> {
+                        // 메시지가 저장된 후 수신자에게 전송
+                        messagingTemplate.convertAndSend("/queue/chat/user/" + savedMessage.getReceiverId(), savedMessage);
+                        System.out.println("chatMessage: " + savedMessage);
+                    });
         } else {
             System.out.println("No user session found.");
+            return Mono.empty(); // 세션이 없으면 빈 Mono 반환
         }
 
-//        chatMessageRepository.save(chatMessage);
-
-        messagingTemplate.convertAndSend("/queue/chat/" + chatMessage.getChatRoomId(), chatMessage);
+//
     }
 }

@@ -42,7 +42,7 @@ public class ChatServiceImpl implements ChatService {
                     .nickname1(userRepository.getByUserId(userId1).getNickname())
                     .userId2(userId2)
                     .nickname2(userRepository.getByUserId(userId2).getNickname())
-                    .createdAt(Timestamp.valueOf(LocalDateTime.now()))
+                    .createdAt(new Timestamp(System.currentTimeMillis()))
                     .build();
 
             return ChatRoomModel.toModel(chatRoomRepository.save(newChatRoom));

@@ -1,6 +1,8 @@
 package shop.freenanum.trade.model.entity;
 
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.springframework.data.annotation.TypeAlias;
@@ -9,6 +11,7 @@ import shop.freenanum.trade.model.domain.ChatMessageModel;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -35,7 +38,7 @@ public class ChatMessageEntity {
     private String content; // 메시지 내용
 
     @NotNull
-    private Timestamp createdAt; // 메시지 전송 시간
+    private Date createdAt; // 메시지 전송 시간
 
     public static ChatMessageEntity toEntity(ChatMessageModel chatMessageModel) {
         return ChatMessageEntity.builder()

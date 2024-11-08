@@ -1,0 +1,32 @@
+<div th:fragment="chatModal">
+    <!-- 채팅 모달 -->
+    <div class="modal fade" id="chatModal" tabindex="-1" role="dialog" aria-labelledby="chatModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="chatModalLabel">채팅</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- 채팅 내용 시작 -->
+                    <div class="chat-container">
+                        <div class="message-container" id="messageContainer">
+                            <!-- 메시지가 여기 나타납니다. -->
+                        </div>
+
+                        <!-- 메시지 입력 및 전송 -->
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control chat-input" id="chatInput" placeholder="메시지를 입력하세요"
+                                   required>
+                            <button class="btn btn-primary send-button" onclick="sendMessage()">전송</button>
+                        </div>
+                    </div>
+                    <!-- 채팅 내용 끝 -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

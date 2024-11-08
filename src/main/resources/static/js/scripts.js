@@ -5,7 +5,6 @@ document.addEventListener("DOMContentLoaded", () => {
     showLoginModal();
     logoutHandler();
     signUpHandler();
-    // moveChatHome();
 });
 
 // 위치 검색을 실행하는 함수
@@ -69,8 +68,9 @@ const loginHandler = () => {
             data: {username, password}
         })
             .then(response => {
-                if (response.status === 200) {
+                if (response.status === 200 && response.data) {
                     alert('로그인 성공!');
+                    sessionStorage.setItem('loginUserId', response.data.id)
                     connectWebSocket();
                     window.location.reload();
                 }
@@ -109,6 +109,7 @@ const logoutHandler = () => {
                 if (response.status === 200) {
                     alert('로그아웃 성공');
                     disconnectWebSocket();
+                    sessionStorage.removeItem('loginUserId');
                     window.location.reload();
                 }
             })
@@ -137,19 +138,35 @@ const signUpHandler = () => {
     })
 }
 
+function chatHandler() {
+
+}
+
 let stompClient = null;
+
 function connectWebSocket() {
     var socket = new SockJS('/ws/chat');
+    let loginUserId = sessionStorage.getItem('loginUserId');
     stompClient = Stomp.over(socket);
+
     stompClient.connect({}, function (frame) {
         console.log('Connected: ' + frame);
         sessionStorage.setItem('isWebSocketConnected', 'true'); // 연결 상태 저장
+
+        stompClient.subscribe('/queue/chat/user/' + loginUserId, function (message) {
+            const chatMessage = JSON.parse(message.body);
+            displayIncomingMessage(chatMessage); // 받은 메시지를 화면에 표시하는 함수
+        });
+    }, function (error) {
+        console.error('WebSocket 연결 실패:', error);
     });
+
 }
 
 // 페이지가 로드될 때 기존 연결이 존재하는지 확인 후 재연결
 document.addEventListener("DOMContentLoaded", function () {
-    if (sessionStorage.getItem('isConnected') === 'true') {
+    // 현재 WebSocket 연결이 없거나 세션에 연결 상태가 없으면 재연결 시도
+    if (sessionStorage.getItem('loginUserId')) {
         connectWebSocket();
     }
 });
@@ -159,26 +176,9 @@ function disconnectWebSocket() {
         stompClient.disconnect(() => {
             console.log("Disconnected from WebSocket");
         });
+        stompClient = null;
     }
     sessionStorage.setItem('isWebSocketConnected', 'false'); // 연결 상태 저장
 }
 
-// const moveChatHome = () => {
-//     const moveChatBtn = document.getElementById('moveChatBtn');
-//     moveChatBtn.addEventListener('click', () => {
-//         axios({
-//             method: 'GET',
-//             url: '/api/users/chat'
-//         })
-//             .then(response => {
-//                 if (response.status === 200) {
-//                     alert('채팅 페이지로 이동');
-//                     window.location.href = response.data;
-//                 }
-//             })
-//             .catch(error => {
-//                 alert('이동 실패: ' + error);
-//             })
-//     })
-// }
 

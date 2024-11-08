@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import shop.freenanum.trade.model.entity.ChatMessageEntity;
 
 import java.sql.Timestamp;
+import java.util.Date;
 
 @Component
 @Getter
@@ -25,7 +26,7 @@ public class ChatMessageModel {
 
     private String content; // 메시지 내용
 
-    private Timestamp createdAt; // 메시지 전송 시간
+    private Date createdAt; // 메시지 전송 시간
 
     public static ChatMessageModel toModel(ChatMessageEntity chatMessageEntity) {
         return ChatMessageModel.builder()

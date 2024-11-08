@@ -24,18 +24,18 @@ public class UserRestController {
     private final ChatRoomRepository chatRoomRepository;
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody UserModel userModel, HttpSession httpSession) throws Exception {
+    public ResponseEntity<UserModel> login(@RequestBody UserModel userModel, HttpSession httpSession) throws Exception {
         UserModel loginUser = UserModel.toModel(userRepository.findByUsernameAndPassword(userModel.getUsername(), userModel.getPassword()));
         if (loginUser == null) {
             System.out.println("로그인 실패");
-            return ResponseEntity.ok("로그인 실패");
+            return ResponseEntity.ok(null);
         } else {
             System.out.println("로그인 성공: " + loginUser);
             httpSession.setAttribute("loginUser", loginUser);
 
 //            redisTemplate.opsForValue().set("user:" + loginUser.getId() + ":chatRooms"
 //                    , chatRoomRepository.getLoginUserChatRooms(loginUser.getId()));
-            return ResponseEntity.ok("로그인 성공");
+            return ResponseEntity.ok(loginUser);
         }
     }
 
@@ -47,7 +47,6 @@ public class UserRestController {
         }
 
         httpSession.removeAttribute("loginUser");
-        redisTemplate.delete("user:" + loginUser.getId() + ":chatRooms");
         return ResponseEntity.ok("로그아웃");
     }
 
