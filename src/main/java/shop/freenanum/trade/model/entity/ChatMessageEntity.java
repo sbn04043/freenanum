@@ -40,6 +40,9 @@ public class ChatMessageEntity {
     @NotNull
     private Date createdAt; // 메시지 전송 시간
 
+    @NotNull
+    private Boolean read;
+
     public static ChatMessageEntity toEntity(ChatMessageModel chatMessageModel) {
         return ChatMessageEntity.builder()
                 .chatRoomId(chatMessageModel.getChatRoomId())
@@ -47,6 +50,7 @@ public class ChatMessageEntity {
                 .receiverId(chatMessageModel.getReceiverId())
                 .content(chatMessageModel.getContent())
                 .createdAt(chatMessageModel.getCreatedAt())
+                .read(chatMessageModel.getRead())
                 .build();
     }
 }

@@ -71,68 +71,16 @@
                 margin: 10px; /* 간격 조정 */
             }
         }
-
-        .chat-container {
-            display: flex;
-            flex-direction: column;
-            height: 400px; /* 모달 높이 설정 */
-            justify-content: flex-end; /* 메시지가 맨 아래에 오도록 정렬 */
-        }
-
-        .message-container {
-            flex: 1; /* 가변 높이 설정 */
-            overflow-y: auto; /* 스크롤 가능 */
-            padding: 10px;
-            background-color: #f1f1f1; /* 배경 색상 */
-            border-radius: 5px;
-            margin-bottom: 10px; /* 입력창과의 간격 */
-            display: flex;
-            flex-direction: column;
-            gap: 10px; /* 메시지들 간의 간격 */
-        }
-
-        .message {
-            margin-bottom: 10px; /* 각 메시지 간 간격 */
-            padding: 8px;
-            border-radius: 15px; /* 모서리 둥글게 */
-            max-width: 75%; /* 메시지 너비 제한 */
-            line-height: 1.4;
-            word-wrap: break-word; /* 긴 단어는 자동으로 줄바꿈 */
-        }
-
-        .message.sent {
-            background-color: #007bff; /* 전송된 메시지 배경 색상 */
-            color: white; /* 텍스트 색상 */
-            align-self: flex-end; /* 오른쪽 정렬 */
-        }
-
-        .message.received {
-            background-color: #e9ecef; /* 수신된 메시지 배경 색상 */
-            color: black; /* 텍스트 색상 */
-            align-self: flex-start; /* 왼쪽 정렬 */
-        }
-
-        /* 입력창과 버튼 스타일 */
-        .input-group {
-            display: flex;
-            align-items: center;
-        }
-
-        .chat-input {
-            flex: 1;
-            border-radius: 5px 0 0 5px; /* 모서리 둥글게 */
-        }
-
-        .send-button {
-            border-radius: 0 5px 5px 0; /* 모서리 둥글게 */
-        }
-
     </style>
+    <link th:href="@{/css/myStyles.css}" rel="stylesheet"/>
+
 </head>
 <body>
 <!--Navigation-->
 <div th:replace="~{/fragment/header :: header}"></div>
 <div th:replace="~{/fragment/chatModal :: chatModal}"></div>
+<!-- chat Notification -->
+<div th:replace="~{/fragment/chatModal :: chatNotification}"></div>
 
 <div class="image-slider-container">
     <!-- 왼쪽 버튼 -->
@@ -203,7 +151,7 @@
 <script th:inline="javascript">
     let chatRoomId = 0;
     let currentIndex = 0;
-    let sellerId = /*[[${product.userId}]]*/;
+    let opponentId = /*[[${product.userId}]]*/;
 
     // JavaScript 배열로 이미지 URL 리스트 저장
     const imageUrls = /*[[${productImgUrls}]]*/ [];

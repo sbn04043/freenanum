@@ -33,4 +33,6 @@ public class ChatRoomEntity {
 
     @NotNull
     private Timestamp createdAt;
+
+    private Timestamp updatedAt;
 }

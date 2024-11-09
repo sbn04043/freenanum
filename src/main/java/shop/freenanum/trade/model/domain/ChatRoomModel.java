@@ -27,6 +27,8 @@ public class ChatRoomModel {
 
     private Timestamp createdAt;
 
+    private Timestamp updatedAt;
+
     public static ChatRoomModel toModel(ChatRoomEntity chatRoomEntity) {
         return ChatRoomModel.builder()
                 .id(chatRoomEntity.getId())
@@ -35,6 +37,7 @@ public class ChatRoomModel {
                 .userId2(chatRoomEntity.getUserId2())
                 .nickname2(chatRoomEntity.getNickname2())
                 .createdAt(chatRoomEntity.getCreatedAt())
+                .updatedAt(chatRoomEntity.getUpdatedAt())
                 .build();
     }
 }

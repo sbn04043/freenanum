@@ -1,32 +1,43 @@
 <div th:fragment="chatModal">
     <!-- 채팅 모달 -->
-    <div class="modal fade" id="chatModal" tabindex="-1" role="dialog" aria-labelledby="chatModalLabel"
-         aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal fade" id="chatModal" tabindex="-1" role="dialog" aria-labelledby="chatModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="chatModalLabel">채팅</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+<!--                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">-->
+<!--                        <span aria-hidden="true">&times;</span>-->
+<!--                    </button>-->
                 </div>
                 <div class="modal-body">
-                    <!-- 채팅 내용 시작 -->
-                    <div class="chat-container">
-                        <div class="message-container" id="messageContainer">
-                            <!-- 메시지가 여기 나타납니다. -->
+                    <div class="row">
+                        <!-- 유저 리스트 -->
+                        <div class="col-4 user-list-container">
+                            <div class="list-group" id="userList">
+                                <!-- 유저 리스트 항목이 여기 나타납니다. -->
+                            </div>
                         </div>
 
-                        <!-- 메시지 입력 및 전송 -->
-                        <div class="input-group mb-3">
-                            <input type="text" class="form-control chat-input" id="chatInput" placeholder="메시지를 입력하세요"
-                                   required>
-                            <button class="btn btn-primary send-button" onclick="sendMessage()">전송</button>
+                        <!-- 채팅 내용 -->
+                        <div class="col-8 chat-container">
+                            <div class="message-container" id="messageContainer">
+                                <!-- 메시지가 여기 나타납니다. -->
+                            </div>
+
+                            <!-- 메시지 입력 및 전송 -->
+                            <div class="inputs-group mb-3">
+                                <input type="text" class="form-control chat-input" id="chatInput" placeholder="메시지를 입력하세요" required>
+                                <button class="btn btn-primary send-button" onclick="sendMessage()">전송</button>
+                            </div>
                         </div>
                     </div>
-                    <!-- 채팅 내용 끝 -->
                 </div>
             </div>
         </div>
     </div>
+</div>
+
+<!-- 알림 컨테이너 -->
+<div th:fragment="chatNotification">
+    <div id="notificationContainer"></div>
 </div>

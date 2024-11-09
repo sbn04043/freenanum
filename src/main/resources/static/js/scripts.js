@@ -138,10 +138,6 @@ const signUpHandler = () => {
     })
 }
 
-function chatHandler() {
-
-}
-
 let stompClient = null;
 
 function connectWebSocket() {
@@ -160,7 +156,6 @@ function connectWebSocket() {
     }, function (error) {
         console.error('WebSocket 연결 실패:', error);
     });
-
 }
 
 // 페이지가 로드될 때 기존 연결이 존재하는지 확인 후 재연결

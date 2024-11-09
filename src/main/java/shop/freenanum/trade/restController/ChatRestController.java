@@ -22,6 +22,7 @@ import shop.freenanum.trade.model.repository.UserRepository;
 
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/chat")
@@ -60,6 +61,7 @@ public class ChatRestController {
                 .userId2(loginUser.getId())
                 .nickname2(loginUser.getNickname())
                 .createdAt(new Timestamp(System.currentTimeMillis()))
+                .updatedAt(new Timestamp(System.currentTimeMillis()))
                 .build()));
 
         Map<String, Object> response = new HashMap<>();
@@ -98,6 +100,38 @@ public class ChatRestController {
                 });
     }
 
+    @GetMapping("/loadUserList/{loginUserId}")
+    public ResponseEntity<List<UserModel>> loadUserList(@PathVariable Long loginUserId, HttpSession session) {
+        List<UserModel> users = chatRoomRepository.getLoginUserChatRooms(loginUserId).stream()
+                .map(chatRoomEntity -> {
+                    Long opponentUserId = Objects.equals(chatRoomEntity.getUserId1(), loginUserId)
+                            ? chatRoomEntity.getUserId2() : chatRoomEntity.getUserId1();
+                    return UserModel.toModel(userRepository.getByUserId(opponentUserId));
+                })
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(users);
+    }
+
+    @GetMapping("/getChatRoomId/{opponentId}")
+    public Mono<ResponseEntity<Map<String, Object>>> getChatRoomId(@PathVariable Long opponentId, HttpSession session) {
+        Long loginUserId = ((UserModel) session.getAttribute("loginUser")).getId();
+        ChatRoomEntity chatRoomEntity = chatRoomRepository.findByUserIdAndOtherUserId(loginUserId, opponentId);
+
+        Map<String, Object> resultMap = new HashMap<>();
+        Long chatRoomId = chatRoomEntity.getId();
+        resultMap.put("chatRoomId", chatRoomId);
+
+        Mono<Long> unreadMessageCount = chatMessageRepository
+                .findByChatRoomIdAndReceiverIdAndReadFalse(chatRoomId, loginUserId)
+                .count();
+
+        return unreadMessageCount.flatMap(count -> {
+            resultMap.put("unreadMessageCount", count);
+            return Mono.just(ResponseEntity.ok(resultMap));
+        });
+    }
+
     @MessageMapping("/sendMessage")
     public Mono<ChatMessageEntity> sendMessage(ChatMessageEntity chatMessage, SimpMessageHeaderAccessor headerAccessor) {
         Long loginUserId = (Long) headerAccessor.getSessionAttributes().get("loginUserId");
@@ -105,8 +139,12 @@ public class ChatRestController {
         if (loginUserId != null) {
             chatMessage.setSenderId(loginUserId);
             chatMessage.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+            chatMessage.setRead(false);
 
             ChatRoomEntity chatRoomEntity = chatRoomRepository.getByChatRoomId(chatMessage.getChatRoomId());
+            chatRoomEntity.setUpdatedAt(new Timestamp(System.currentTimeMillis()));
+            chatRoomRepository.save(chatRoomEntity);
+
             if (loginUserId.equals(chatRoomEntity.getUserId1())) {
                 chatMessage.setReceiverId(chatRoomEntity.getUserId2());
             } else {
@@ -123,7 +161,5 @@ public class ChatRestController {
             System.out.println("No user session found.");
             return Mono.empty(); // 세션이 없으면 빈 Mono 반환
         }
-
-//
     }
 }

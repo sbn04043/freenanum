@@ -45,7 +45,7 @@ public class ChatRoomQuerydslImpl implements ChatRoomQuerydsl {
         return jpaQueryFactory
                 .selectFrom(qChatRoom)
                 .where(qChatRoom.userId1.eq(id).or(qChatRoom.userId2.eq(id)))
-                .orderBy(qChatRoom.createdAt.desc())
+                .orderBy(qChatRoom.updatedAt.desc())
                 .fetch();
 
     }
