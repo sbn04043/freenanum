@@ -39,12 +39,13 @@ public class ProductEntity {
 
     public static ProductEntity toUploadEntity(ProductModel productModel) {
         return ProductEntity.builder()
-                .userId(1L) // 추후에 고치기
+                .userId(productModel.getUserId()) // 추후에 고치기
                 .productTitle(productModel.getProductTitle())
                 .productAddress(productModel.getProductAddress())
                 .productDescription(productModel.getProductDescription())
                 .price(productModel.getPrice())
                 .views(0L)
+                .productStatus(ProductStatus.GOOD)
                 .build();
     }
 }

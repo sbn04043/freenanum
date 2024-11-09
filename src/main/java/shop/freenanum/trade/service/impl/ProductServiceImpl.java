@@ -1,5 +1,6 @@
 package shop.freenanum.trade.service.impl;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -37,6 +38,7 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final ProductImageService productImageService;
     private final ProductImageRepository productImageRepository;
+    private final HttpSession httpSession;
 
     @Override
     public List<ProductEntity> findAll() {
@@ -45,6 +47,14 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductEntity save(ProductEntity productEntity) {
+        Long loginUserId = ((UserModel) httpSession.getAttribute("loginUser")).getId();
+        if (loginUserId == null) {
+            System.out.println("세션정보 없음");
+            // or, throw new UnauthorizedException("User is not logged in.");
+        }
+        // 로그인된 사용자 ID를 productEntity에 설정
+        productEntity.setUserId(loginUserId);
+
         return productRepository.save(productEntity);
     }
 

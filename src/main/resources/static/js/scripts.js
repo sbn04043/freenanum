@@ -175,5 +175,3 @@ function disconnectWebSocket() {
     }
     sessionStorage.setItem('isWebSocketConnected', 'false'); // 연결 상태 저장
 }
-
-

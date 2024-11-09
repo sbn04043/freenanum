@@ -88,6 +88,8 @@ function displayMessagesInModal(messages, opponentUser) {
 
         // 메시지 요소를 컨테이너에 추가
         chatMessagesContainer.appendChild(messageElement);
+
+        loadUserList();
     });
 
     // 모달을 띄웁니다

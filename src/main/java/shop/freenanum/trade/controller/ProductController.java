@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import shop.freenanum.trade.model.domain.ProductModel;
+import shop.freenanum.trade.model.domain.UserModel;
 import shop.freenanum.trade.model.entity.ProductEntity;
 import shop.freenanum.trade.model.repository.ProductImageRepository;
 import shop.freenanum.trade.model.repository.ProductRepository;
@@ -25,17 +26,40 @@ public class ProductController {
     private final UserRepository userRepository;
 
     @PostMapping("/upload")
-    public String register(@RequestBody ProductModel productModel, Model model, MultipartFile multipartFile) {
+    public String register(@RequestParam("productTitle") String productTitle,
+                           @RequestParam("productAddress") String productAddress,
+                           @RequestParam("price") long price,
+                           @RequestParam("productDescription") String productDescription,
+                           @RequestParam("productImg") MultipartFile multipartFile,
+                           HttpSession session) {
+        System.out.println(multipartFile);
+
+        ProductModel productModel = new ProductModel();
+        productModel.setUserId(((UserModel)session.getAttribute("loginUser")).getId());
+        productModel.setProductTitle(productTitle);
+        productModel.setProductAddress(productAddress);
+        productModel.setPrice(price);
+        productModel.setProductDescription(productDescription);
+
+
+
         Long productId = productService.save(ProductEntity.toUploadEntity(productModel)).getId();
         productImageService.saveImage(productId, multipartFile);
 
         return "redirect:/api/products/" + productId;
     }
 
+
     @GetMapping("/upload")
-    public String register() {
-        return "products/upload";
+    public String register(HttpSession session, Model model) {
+        if (session.getAttribute("loginUser") == null) {
+            return "redirect:/api/products/list";
+        }
+        model.addAttribute("address", ((UserModel) session.getAttribute("loginUser")).getUserAddress());
+
+        return "products/upload"; // JSON 형태로 리턴
     }
+
 
     @GetMapping("/{id}")
     public String showProduct(@PathVariable("id") Long id, Model model, HttpSession httpSession) {
@@ -63,5 +87,23 @@ public class ProductController {
                         .imgUrl(productImageRepository.getOneById(productEntity.getId()))
                         .build()).toList());
         return "products/hotList";
+    }
+
+    @GetMapping("/edit/{productId}")
+    public String update(@PathVariable Long productId, Model model, HttpSession session) {
+        if (session.getAttribute("loginUser") == null) {
+            return "redirect:/api/products/" + productId;
+        }
+
+        if (((UserModel) session.getAttribute("loginUser")).getId() != productId) {
+            return "redirect:/api/products/" + productId;
+        }
+
+        model.addAttribute("product", ProductModel.toModel(productRepository.getProductById(productId)));
+        model.addAttribute("productImgs", productImageRepository.findByProductId(productId));
+
+        System.out.println(productRepository.getProductById(productId));
+
+        return "products/edit";
     }
 }

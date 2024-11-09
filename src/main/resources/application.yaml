@@ -2,6 +2,12 @@ spring:
   application:
     name: freenanum
 
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 2MB
+      max-request-size: 2MB
+
   # 데이터베이스 설정
   datasource:
     url: jdbc:mysql://localhost:3306/freenanum
@@ -81,3 +87,5 @@ springdoc:
   model-and-view-allowed: true
   paths-to-match:
     - /**
+file:
+  upload-dir: src/main/resources/static/image/productImage/

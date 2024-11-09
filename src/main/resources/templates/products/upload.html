@@ -38,7 +38,7 @@
 
 <div class="upload-container">
   <h2 class="text-center">상품 게시물 업로드</h2>
-  <form th:action="@{/product/upload}" method="post" enctype="multipart/form-data">
+  <form th:action="@{/api/products/upload}" method="post" enctype="multipart/form-data">
     <div class="mb-3">
       <label class="form-label" for="productTitle">상품 이름</label>
       <input type="text" id="productTitle" name="productTitle" class="form-control" required/>
@@ -46,7 +46,7 @@
 
     <div class="mb-3">
       <label class="form-label" for="productAddress">거래 주소</label>
-      <input type="text" id="productAddress" name="productAddress" class="form-control" required/>
+      <input type="text" id="productAddress" name="productAddress" class="form-control" required th:value="${address}"/>
     </div>
 
     <div class="mb-3">
