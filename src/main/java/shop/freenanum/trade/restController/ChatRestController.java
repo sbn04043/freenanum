@@ -108,40 +108,6 @@ public class ChatRestController {
                         return Mono.just(ResponseEntity.notFound().build()); // 채팅방이 없는 경우
                     }
                 });
-//        UserModel loginUser = (UserModel) httpSession.getAttribute("loginUser");
-//
-//        chatMessageRepository.findByChatRoomId(chatRoomId).map(chatMessageEntity -> {
-//            if (chatMessageEntity.getReceiverId() == loginUser.getId()) {
-//                chatMessageEntity.setRead(true);
-//                chatMessageRepository.save(chatMessageEntity);
-//            }
-//        });
-//
-//        return chatMessageRepository.findByChatRoomId(chatRoomId)  // MongoDB에서 가져오는 Flux 데이터
-//                .collectList()  // Flux를 List로 변환
-//                .flatMap(chatMessageEntity -> {
-//                    Map<String, Object> result = new HashMap<>();
-//
-//                    // MySQL 데이터는 동기적으로 조회
-//                    Optional<ChatRoomEntity> chatRoomEntityOptional = chatRoomRepository.findById(chatRoomId);
-//                    if (chatRoomEntityOptional.isPresent()) {
-//                        ChatRoomEntity chatRoomEntity = chatRoomEntityOptional.get();
-//                        UserModel opponentUser;
-//
-//                        if (chatRoomEntity.getUserId1() == loginUser.getId()) {
-//                            opponentUser = UserModel.toModel(userRepository.getByUserId(chatRoomEntity.getUserId2()));
-//                        } else {
-//                            opponentUser = UserModel.toModel(userRepository.getByUserId(chatRoomEntity.getUserId1()));
-//                        }
-//
-//                        result.put("chatMessages", chatMessageEntity != null ? chatMessageEntity : new ArrayList<>());
-//                        result.put("opponentUser", opponentUser);
-//
-//                        return Mono.just(ResponseEntity.ok(result));
-//                    } else {
-//                        return Mono.just(ResponseEntity.notFound().build());  // 채팅방이 없는 경우
-//                    }
-//                });
     }
 
     @GetMapping("/loadUserList/{loginUserId}")
@@ -174,6 +140,21 @@ public class ChatRestController {
             resultMap.put("unreadMessageCount", count);
             return Mono.just(ResponseEntity.ok(resultMap));
         });
+    }
+
+    @GetMapping("/api/chat/setChatMessageReadTrue/{chatMessageId}")
+    public Mono<Void> setChatMessageReadTrue(@PathVariable String chatMessageId) {
+        return chatMessageRepository.findById(chatMessageId)
+                .filter(chatMessageEntity -> chatMessageEntity != null && !chatMessageEntity.getRead())
+                .doOnNext(chatMessageEntity -> {
+                    chatMessageEntity.setRead(true);
+                    chatMessageRepository.save(chatMessageEntity).subscribe();
+                })
+                .then()
+                .onErrorResume(e -> {
+                    // 에러 처리 로직 (예: 로그를 남기거나 적절한 에러 메시지를 반환)
+                    return Mono.empty(); // 예외가 발생하면 아무것도 반환하지 않음
+                });
     }
 
     @MessageMapping("/sendMessage")

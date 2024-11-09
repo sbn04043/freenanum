@@ -15,6 +15,8 @@ import shop.freenanum.trade.model.repository.UserRepository;
 import shop.freenanum.trade.service.ProductImageService;
 import shop.freenanum.trade.service.ProductService;
 
+import java.util.Objects;
+
 @Controller
 @RequestMapping("/api/products")
 @RequiredArgsConstructor
@@ -24,6 +26,7 @@ public class ProductController {
     private final ProductRepository productRepository;
     private final ProductImageRepository productImageRepository;
     private final UserRepository userRepository;
+    private final ProductModel productModel;
 
     @PostMapping("/upload")
     public String register(@RequestParam("productTitle") String productTitle,
@@ -35,16 +38,15 @@ public class ProductController {
         System.out.println(multipartFile);
 
         ProductModel productModel = new ProductModel();
-        productModel.setUserId(((UserModel)session.getAttribute("loginUser")).getId());
+        productModel.setUserId(((UserModel) session.getAttribute("loginUser")).getId());
         productModel.setProductTitle(productTitle);
         productModel.setProductAddress(productAddress);
         productModel.setPrice(price);
         productModel.setProductDescription(productDescription);
 
-
-
         Long productId = productService.save(ProductEntity.toUploadEntity(productModel)).getId();
-        productImageService.saveImage(productId, multipartFile);
+        if (!multipartFile.isEmpty())
+            productImageService.saveImage(productId, multipartFile);
 
         return "redirect:/api/products/" + productId;
     }
@@ -90,20 +92,45 @@ public class ProductController {
     }
 
     @GetMapping("/edit/{productId}")
-    public String update(@PathVariable Long productId, Model model, HttpSession session) {
+    public String edit(@PathVariable Long productId, Model model, HttpSession session) {
         if (session.getAttribute("loginUser") == null) {
             return "redirect:/api/products/" + productId;
         }
 
-        if (((UserModel) session.getAttribute("loginUser")).getId() != productId) {
+        ProductEntity productEntity = productRepository.getProductById(productId);
+        System.out.println("productEntity: " + productEntity);
+        if (((UserModel) session.getAttribute("loginUser")).getId() != productEntity.getUserId()) {
             return "redirect:/api/products/" + productId;
         }
 
-        model.addAttribute("product", ProductModel.toModel(productRepository.getProductById(productId)));
-        model.addAttribute("productImgs", productImageRepository.findByProductId(productId));
+        ProductModel productModel = ProductModel.toModel(productEntity);
+        System.out.println("productModel: " + productModel);
+        model.addAttribute("product", productModel);
+        model.addAttribute("productImages", productImageRepository.findByProductId(productId));
 
         System.out.println(productRepository.getProductById(productId));
 
         return "products/edit";
+    }
+
+    @PostMapping("/edit/{productId}")
+    public String edit(@PathVariable Long productId,
+                       @RequestParam("productTitle") String productTitle,
+                       @RequestParam("productAddress") String productAddress,
+                       @RequestParam("price") long price,
+                       @RequestParam("productDescription") String productDescription,
+                       @RequestParam("productImg") MultipartFile multipartFile) {
+
+        ProductEntity productEntity = productRepository.getByProductId(productId);
+        productEntity.setProductTitle(productTitle);
+        productEntity.setProductAddress(productAddress);
+        productEntity.setPrice(price);
+        productEntity.setProductDescription(productDescription);
+
+        productRepository.save(productEntity);
+
+        productImageService.saveImage(productId, multipartFile);
+
+        return "redirect:/api/products/" + productId;
     }
 }

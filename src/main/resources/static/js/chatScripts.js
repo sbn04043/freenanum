@@ -158,7 +158,7 @@ function loadUserList() {
                 userButton.textContent = user.nickname;
                 axios({
                     method: 'GET',
-                    url: `/api/chat/getChatRoomId/${user.id}`,
+                    url: `/api/chat/getChatRoomId/${user.id}`
                 })
                     .then(response => {
                         userButton.onclick = () => loadChatMessages(response.data.chatRoomId);
@@ -219,6 +219,11 @@ function displayIncomingMessage(chatMessage) {
 
     // 메시지가 추가되면 스크롤을 아래로 이동
     messageContainer.scrollTop = messageContainer.scrollHeight;
+
+    axios({
+        method: 'GET',
+        url: `/api/chat/setChatMessageReadTrue/${chatMessage.id}`
+    })
 }
 
 function showNotification(message) {

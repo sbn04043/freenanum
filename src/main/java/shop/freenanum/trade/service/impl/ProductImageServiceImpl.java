@@ -35,8 +35,11 @@ public class ProductImageServiceImpl implements ProductImageService {
         String fileName = UUID.randomUUID().toString() + "_" + sanitizeFileName(productImg.getOriginalFilename());
 
         // 실제 파일 저장 경로 (절대 경로 사용)
-        String absolutePath = "C:\\Users\\bitcamp\\IdeaProjects\\freenanum\\src\\main\\resources\\static\\image\\productImage";  // 실제 경로로 수정
+        // 비트 캠프
+        //String absolutePath = "C:\\Users\\bitcamp\\IdeaProjects\\freenanum\\src\\main\\resources\\static\\image\\productImage";  // 실제 경로로 수정
 
+        // 준수 로컬
+        String absolutePath = "C:\\Users\\sbn04\\IdeaProjects\\freenanum\\src\\main\\resources\\static\\image\\productImage";
         File directory = new File(absolutePath);
         // 디렉토리 없으면 생성
         if (!directory.exists()) {

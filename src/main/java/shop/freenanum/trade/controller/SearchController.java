@@ -37,19 +37,20 @@ public class SearchController {
     public String searchProducts(@PathVariable Long pageNo,
                                  @RequestParam String locationInput,
                                  @RequestParam String productInput,
-                                 Model model,
-                                 HttpServletResponse response) {
-        List<ProductModel> productList = productRepository.search(pageNo, locationInput, productInput).stream()
-                .map(ProductModel::toModel)
-                .peek(productModel -> {
-                    productModel.setImgUrl(productImageRepository.getOneById(productModel.getId()));
-                })
-                .toList();
+                                 Model model) {
+        System.out.println("pageNo = " + pageNo + ", locationInput = " + locationInput + ", productInput = " + productInput);
+        List<ProductModel> productList = productRepository.search(pageNo, locationInput, productInput)
+                .stream().map(ProductModel::toModel).toList();
+        for (ProductModel product : productList) {
+            product.setImgUrl(productImageRepository.getOneById(product.getId()));
+            System.out.println("productImgUrl: " + product.getImgUrl());
+        }
+
 
         model.addAttribute("products", productList);
         model.addAttribute("pagination", new Pagination(pageNo, productRepository.searchCount(locationInput, productInput)));
-        model.addAttribute("location", locationInput);
-        model.addAttribute("product", productInput);
+        model.addAttribute("locationInput", locationInput);
+        model.addAttribute("productInput", productInput);
 
         return "/products/searchList";
     }
