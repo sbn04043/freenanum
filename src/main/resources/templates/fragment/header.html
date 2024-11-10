@@ -1,0 +1,77 @@
+<header>
+    <style>
+        .btn-outline-dark {
+            white-space: nowrap; /* 줄바꿈 방지 */
+        }
+    </style>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container px-4 px-lg-5">
+            <a class="navbar-brand" href="/api/products/list">Free Trade</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
+                    <li class="nav-item"><a class="nav-link active" aria-current="page"
+                                            href="/api/products/upload">상품 등록</a></li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button"
+                           data-bs-toggle="dropdown" aria-expanded="false">Shop</a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="#!">All Products</a></li>
+                            <li>
+                                <hr class="dropdown-divider"/>
+                            </li>
+                            <li><a class="dropdown-item" href="#!">Popular Items</a></li>
+                            <li><a class="dropdown-item" href="#!">New Arrivals</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <form th:action="@{/api/search/products/1}" method="get" class="d-flex align-items-center">
+                            <label for="locationInput"></label>
+                            <input type="text" id="locationInput" class="form-control me-2" placeholder="주소 입력"
+                                   name="locationInput" onkeyup="getLocationList()"/>
+                            <label for="productInput"></label>
+                            <input type="text" id="productInput" class="form-control me-2"
+                                   name="productInput" placeholder="상품 이름"/>
+                            <button type="submit" class="btn btn-outline-dark m-auto">검색</button>
+                        </form>
+                        <div class="list-group" id="locationResult"
+                             style="display: none;
+                          position: absolute;
+                           z-index: 1000;
+                            background: white;
+                             max-height: 200px;
+                              overflow-y: auto;
+                               border: 1px solid #ccc;
+                                border-radius: 5px;"></div>
+                    </li>
+                </ul>
+                <div th:if="${session.loginUser != null}">
+                    <div style="display: flex; gap: 10px;"> <!-- 버튼 간의 간격을 주기 위해 gap 사용 -->
+                        <button type="button" class="btn btn-primary" id="logoutBtn"
+                                th:text="로그아웃" onclick="logoutHandler()">
+                        </button>
+                        <button class="btn btn-primary"
+                                th:onclick="openChatModal()">
+                            채팅
+                        </button>
+                        <button type="button" class="btn btn-outline-primary"
+                                th:text="'마이페이지'" onclick="location.href='/api/users/mypage'">
+                        </button>
+
+                    </div>
+                </div>
+                <div th:if="${session.loginUser == null}">
+                    <div style="display: flex; gap: 10px;"> <!-- 버튼 간의 간격을 주기 위해 gap 사용 -->
+                        <div th:replace="~{/fragment/loginModal :: loginModalButton}"></div>
+                        <div th:replace="~{/fragment/loginModal :: loginModal}"></div>
+
+                        <a class="btn btn-primary" href="/api/users/signup">회원 가입</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
